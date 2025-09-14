@@ -1,56 +1,20 @@
 {
   "annotations": {
-    "changelogDate": "20250831164412"
+    "changelogDate": "20250914124104"
   },
-  "applications": ["gateway", "ms_booking"],
+  "applications": ["ms_booking"],
   "clientRootFolder": "ms_booking",
   "databaseType": "sql",
   "dto": "mapstruct",
   "fields": [
-    {
-      "fieldName": "id",
-      "fieldType": "UUID",
-      "fieldValidateRules": ["required"]
-    },
     {
       "fieldName": "userId",
       "fieldType": "UUID",
       "fieldValidateRules": ["required"]
     },
     {
-      "fieldName": "scheduleId",
+      "fieldName": "tripId",
       "fieldType": "UUID",
-      "fieldValidateRules": ["required"]
-    },
-    {
-      "fieldName": "ticketIds",
-      "fieldType": "TextBlob",
-      "fieldValidateRules": ["required"]
-    },
-    {
-      "fieldName": "totalAmount",
-      "fieldType": "BigDecimal",
-      "fieldValidateRules": ["required"]
-    },
-    {
-      "fieldName": "status",
-      "fieldType": "BookingStatus",
-      "fieldValidateRules": ["required"],
-      "fieldValues": "PENDING,CONFIRMED,CANCELLED,COMPLETED"
-    },
-    {
-      "fieldName": "passengerDetails",
-      "fieldType": "TextBlob",
-      "fieldValidateRules": ["required"]
-    },
-    {
-      "fieldName": "contactEmail",
-      "fieldType": "String",
-      "fieldValidateRules": ["required"]
-    },
-    {
-      "fieldName": "contactPhone",
-      "fieldType": "String",
       "fieldValidateRules": ["required"]
     },
     {
@@ -59,26 +23,58 @@
       "fieldValidateRules": ["required", "unique"]
     },
     {
+      "fieldName": "status",
+      "fieldType": "BookingStatus",
+      "fieldValidateRules": ["required"],
+      "fieldValues": "DRAFT,PENDING_PAYMENT,CONFIRMED,CHECKED_IN,COMPLETED,CANCELLED,REFUNDED"
+    },
+    {
+      "fieldName": "totalAmount",
+      "fieldType": "BigDecimal",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "contactPhone",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "contactEmail",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "specialRequests",
+      "fieldType": "String"
+    },
+    {
       "fieldName": "createdAt",
       "fieldType": "Instant",
       "fieldValidateRules": ["required"]
     },
     {
-      "fieldName": "updatedAt",
-      "fieldType": "Instant",
-      "fieldValidateRules": ["required"]
-    },
-    {
       "fieldName": "expiresAt",
-      "fieldType": "Instant",
-      "fieldValidateRules": ["required"]
+      "fieldType": "Instant"
     }
   ],
   "jpaMetamodelFiltering": true,
   "microserviceName": "ms_booking",
   "name": "Booking",
   "pagination": "infinite-scroll",
-  "relationships": [],
+  "relationships": [
+    {
+      "otherEntityName": "passenger",
+      "otherEntityRelationshipName": "booking",
+      "relationshipName": "passengers",
+      "relationshipSide": "left",
+      "relationshipType": "one-to-many"
+    },
+    {
+      "otherEntityName": "bookingHistory",
+      "otherEntityRelationshipName": "booking",
+      "relationshipName": "histories",
+      "relationshipSide": "left",
+      "relationshipType": "one-to-many"
+    }
+  ],
   "searchEngine": "no",
   "service": "serviceImpl"
 }

@@ -1,11 +1,14 @@
 package com.ticketsystem.booking.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.ticketsystem.booking.domain.enumeration.BookingStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -23,12 +26,10 @@ public class Booking implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @NotNull
     @Id
-    @GeneratedValue
-    @JdbcTypeCode(SqlTypes.VARCHAR)
-    @Column(name = "id", length = 36, nullable = false)
-    private UUID id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private Long id;
 
     @NotNull
     @JdbcTypeCode(SqlTypes.VARCHAR)
@@ -37,62 +38,60 @@ public class Booking implements Serializable {
 
     @NotNull
     @JdbcTypeCode(SqlTypes.VARCHAR)
-    @Column(name = "schedule_id", length = 36, nullable = false)
-    private UUID scheduleId;
-
-    @Lob
-    @Column(name = "ticket_ids", nullable = false)
-    private String ticketIds;
-
-    @NotNull
-    @Column(name = "total_amount", precision = 21, scale = 2, nullable = false)
-    private BigDecimal totalAmount;
-
-    @NotNull
-    @Enumerated(EnumType.STRING)
-    @Column(name = "status", nullable = false)
-    private BookingStatus status;
-
-    @Lob
-    @Column(name = "passenger_details", nullable = false)
-    private String passengerDetails;
-
-    @NotNull
-    @Column(name = "contact_email", nullable = false)
-    private String contactEmail;
-
-    @NotNull
-    @Column(name = "contact_phone", nullable = false)
-    private String contactPhone;
+    @Column(name = "trip_id", length = 36, nullable = false)
+    private UUID tripId;
 
     @NotNull
     @Column(name = "booking_reference", nullable = false, unique = true)
     private String bookingReference;
 
     @NotNull
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false)
+    private BookingStatus status;
+
+    @NotNull
+    @Column(name = "total_amount", precision = 21, scale = 2, nullable = false)
+    private BigDecimal totalAmount;
+
+    @Column(name = "contact_phone")
+    private String contactPhone;
+
+    @Column(name = "contact_email")
+    private String contactEmail;
+
+    @Column(name = "special_requests")
+    private String specialRequests;
+
+    @NotNull
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;
 
-    @NotNull
-    @Column(name = "updated_at", nullable = false)
-    private Instant updatedAt;
-
-    @NotNull
-    @Column(name = "expires_at", nullable = false)
+    @Column(name = "expires_at")
     private Instant expiresAt;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "booking")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    @JsonIgnoreProperties(value = { "booking" }, allowSetters = true)
+    private Set<Passenger> passengers = new HashSet<>();
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "booking")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    @JsonIgnoreProperties(value = { "booking" }, allowSetters = true)
+    private Set<BookingHistory> histories = new HashSet<>();
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
-    public UUID getId() {
+    public Long getId() {
         return this.id;
     }
 
-    public Booking id(UUID id) {
+    public Booking id(Long id) {
         this.setId(id);
         return this;
     }
 
-    public void setId(UUID id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -109,95 +108,17 @@ public class Booking implements Serializable {
         this.userId = userId;
     }
 
-    public UUID getScheduleId() {
-        return this.scheduleId;
+    public UUID getTripId() {
+        return this.tripId;
     }
 
-    public Booking scheduleId(UUID scheduleId) {
-        this.setScheduleId(scheduleId);
+    public Booking tripId(UUID tripId) {
+        this.setTripId(tripId);
         return this;
     }
 
-    public void setScheduleId(UUID scheduleId) {
-        this.scheduleId = scheduleId;
-    }
-
-    public String getTicketIds() {
-        return this.ticketIds;
-    }
-
-    public Booking ticketIds(String ticketIds) {
-        this.setTicketIds(ticketIds);
-        return this;
-    }
-
-    public void setTicketIds(String ticketIds) {
-        this.ticketIds = ticketIds;
-    }
-
-    public BigDecimal getTotalAmount() {
-        return this.totalAmount;
-    }
-
-    public Booking totalAmount(BigDecimal totalAmount) {
-        this.setTotalAmount(totalAmount);
-        return this;
-    }
-
-    public void setTotalAmount(BigDecimal totalAmount) {
-        this.totalAmount = totalAmount;
-    }
-
-    public BookingStatus getStatus() {
-        return this.status;
-    }
-
-    public Booking status(BookingStatus status) {
-        this.setStatus(status);
-        return this;
-    }
-
-    public void setStatus(BookingStatus status) {
-        this.status = status;
-    }
-
-    public String getPassengerDetails() {
-        return this.passengerDetails;
-    }
-
-    public Booking passengerDetails(String passengerDetails) {
-        this.setPassengerDetails(passengerDetails);
-        return this;
-    }
-
-    public void setPassengerDetails(String passengerDetails) {
-        this.passengerDetails = passengerDetails;
-    }
-
-    public String getContactEmail() {
-        return this.contactEmail;
-    }
-
-    public Booking contactEmail(String contactEmail) {
-        this.setContactEmail(contactEmail);
-        return this;
-    }
-
-    public void setContactEmail(String contactEmail) {
-        this.contactEmail = contactEmail;
-    }
-
-    public String getContactPhone() {
-        return this.contactPhone;
-    }
-
-    public Booking contactPhone(String contactPhone) {
-        this.setContactPhone(contactPhone);
-        return this;
-    }
-
-    public void setContactPhone(String contactPhone) {
-        this.contactPhone = contactPhone;
+    public void setTripId(UUID tripId) {
+        this.tripId = tripId;
     }
 
     public String getBookingReference() {
@@ -213,6 +134,71 @@ public class Booking implements Serializable {
         this.bookingReference = bookingReference;
     }
 
+    public BookingStatus getStatus() {
+        return this.status;
+    }
+
+    public Booking status(BookingStatus status) {
+        this.setStatus(status);
+        return this;
+    }
+
+    public void setStatus(BookingStatus status) {
+        this.status = status;
+    }
+
+    public BigDecimal getTotalAmount() {
+        return this.totalAmount;
+    }
+
+    public Booking totalAmount(BigDecimal totalAmount) {
+        this.setTotalAmount(totalAmount);
+        return this;
+    }
+
+    public void setTotalAmount(BigDecimal totalAmount) {
+        this.totalAmount = totalAmount;
+    }
+
+    public String getContactPhone() {
+        return this.contactPhone;
+    }
+
+    public Booking contactPhone(String contactPhone) {
+        this.setContactPhone(contactPhone);
+        return this;
+    }
+
+    public void setContactPhone(String contactPhone) {
+        this.contactPhone = contactPhone;
+    }
+
+    public String getContactEmail() {
+        return this.contactEmail;
+    }
+
+    public Booking contactEmail(String contactEmail) {
+        this.setContactEmail(contactEmail);
+        return this;
+    }
+
+    public void setContactEmail(String contactEmail) {
+        this.contactEmail = contactEmail;
+    }
+
+    public String getSpecialRequests() {
+        return this.specialRequests;
+    }
+
+    public Booking specialRequests(String specialRequests) {
+        this.setSpecialRequests(specialRequests);
+        return this;
+    }
+
+    public void setSpecialRequests(String specialRequests) {
+        this.specialRequests = specialRequests;
+    }
+
     public Instant getCreatedAt() {
         return this.createdAt;
     }
@@ -226,19 +212,6 @@ public class Booking implements Serializable {
         this.createdAt = createdAt;
     }
 
-    public Instant getUpdatedAt() {
-        return this.updatedAt;
-    }
-
-    public Booking updatedAt(Instant updatedAt) {
-        this.setUpdatedAt(updatedAt);
-        return this;
-    }
-
-    public void setUpdatedAt(Instant updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
     public Instant getExpiresAt() {
         return this.expiresAt;
     }
@@ -250,6 +223,68 @@ public class Booking implements Serializable {
 
     public void setExpiresAt(Instant expiresAt) {
         this.expiresAt = expiresAt;
+    }
+
+    public Set<Passenger> getPassengers() {
+        return this.passengers;
+    }
+
+    public void setPassengers(Set<Passenger> passengers) {
+        if (this.passengers != null) {
+            this.passengers.forEach(i -> i.setBooking(null));
+        }
+        if (passengers != null) {
+            passengers.forEach(i -> i.setBooking(this));
+        }
+        this.passengers = passengers;
+    }
+
+    public Booking passengers(Set<Passenger> passengers) {
+        this.setPassengers(passengers);
+        return this;
+    }
+
+    public Booking addPassengers(Passenger passenger) {
+        this.passengers.add(passenger);
+        passenger.setBooking(this);
+        return this;
+    }
+
+    public Booking removePassengers(Passenger passenger) {
+        this.passengers.remove(passenger);
+        passenger.setBooking(null);
+        return this;
+    }
+
+    public Set<BookingHistory> getHistories() {
+        return this.histories;
+    }
+
+    public void setHistories(Set<BookingHistory> bookingHistories) {
+        if (this.histories != null) {
+            this.histories.forEach(i -> i.setBooking(null));
+        }
+        if (bookingHistories != null) {
+            bookingHistories.forEach(i -> i.setBooking(this));
+        }
+        this.histories = bookingHistories;
+    }
+
+    public Booking histories(Set<BookingHistory> bookingHistories) {
+        this.setHistories(bookingHistories);
+        return this;
+    }
+
+    public Booking addHistories(BookingHistory bookingHistory) {
+        this.histories.add(bookingHistory);
+        bookingHistory.setBooking(this);
+        return this;
+    }
+
+    public Booking removeHistories(BookingHistory bookingHistory) {
+        this.histories.remove(bookingHistory);
+        bookingHistory.setBooking(null);
+        return this;
     }
 
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
@@ -277,16 +312,14 @@ public class Booking implements Serializable {
         return "Booking{" +
             "id=" + getId() +
             ", userId='" + getUserId() + "'" +
-            ", scheduleId='" + getScheduleId() + "'" +
-            ", ticketIds='" + getTicketIds() + "'" +
-            ", totalAmount=" + getTotalAmount() +
-            ", status='" + getStatus() + "'" +
-            ", passengerDetails='" + getPassengerDetails() + "'" +
-            ", contactEmail='" + getContactEmail() + "'" +
-            ", contactPhone='" + getContactPhone() + "'" +
+            ", tripId='" + getTripId() + "'" +
             ", bookingReference='" + getBookingReference() + "'" +
+            ", status='" + getStatus() + "'" +
+            ", totalAmount=" + getTotalAmount() +
+            ", contactPhone='" + getContactPhone() + "'" +
+            ", contactEmail='" + getContactEmail() + "'" +
+            ", specialRequests='" + getSpecialRequests() + "'" +
             ", createdAt='" + getCreatedAt() + "'" +
-            ", updatedAt='" + getUpdatedAt() + "'" +
             ", expiresAt='" + getExpiresAt() + "'" +
             "}";
     }

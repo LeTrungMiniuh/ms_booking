@@ -49,21 +49,19 @@ public class BookingAsserts {
         assertThat(actual)
             .as("Verify Booking relevant properties")
             .satisfies(a -> assertThat(a.getUserId()).as("check userId").isEqualTo(expected.getUserId()))
-            .satisfies(a -> assertThat(a.getScheduleId()).as("check scheduleId").isEqualTo(expected.getScheduleId()))
-            .satisfies(a -> assertThat(a.getTicketIds()).as("check ticketIds").isEqualTo(expected.getTicketIds()))
+            .satisfies(a -> assertThat(a.getTripId()).as("check tripId").isEqualTo(expected.getTripId()))
+            .satisfies(a -> assertThat(a.getBookingReference()).as("check bookingReference").isEqualTo(expected.getBookingReference()))
+            .satisfies(a -> assertThat(a.getStatus()).as("check status").isEqualTo(expected.getStatus()))
             .satisfies(a ->
                 assertThat(a.getTotalAmount())
                     .as("check totalAmount")
                     .usingComparator(bigDecimalCompareTo)
                     .isEqualTo(expected.getTotalAmount())
             )
-            .satisfies(a -> assertThat(a.getStatus()).as("check status").isEqualTo(expected.getStatus()))
-            .satisfies(a -> assertThat(a.getPassengerDetails()).as("check passengerDetails").isEqualTo(expected.getPassengerDetails()))
-            .satisfies(a -> assertThat(a.getContactEmail()).as("check contactEmail").isEqualTo(expected.getContactEmail()))
             .satisfies(a -> assertThat(a.getContactPhone()).as("check contactPhone").isEqualTo(expected.getContactPhone()))
-            .satisfies(a -> assertThat(a.getBookingReference()).as("check bookingReference").isEqualTo(expected.getBookingReference()))
+            .satisfies(a -> assertThat(a.getContactEmail()).as("check contactEmail").isEqualTo(expected.getContactEmail()))
+            .satisfies(a -> assertThat(a.getSpecialRequests()).as("check specialRequests").isEqualTo(expected.getSpecialRequests()))
             .satisfies(a -> assertThat(a.getCreatedAt()).as("check createdAt").isEqualTo(expected.getCreatedAt()))
-            .satisfies(a -> assertThat(a.getUpdatedAt()).as("check updatedAt").isEqualTo(expected.getUpdatedAt()))
             .satisfies(a -> assertThat(a.getExpiresAt()).as("check expiresAt").isEqualTo(expected.getExpiresAt()));
     }
 

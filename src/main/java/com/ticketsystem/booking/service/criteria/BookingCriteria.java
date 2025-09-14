@@ -40,44 +40,50 @@ public class BookingCriteria implements Serializable, Criteria {
 
     private static final long serialVersionUID = 1L;
 
-    private UUIDFilter id;
+    private LongFilter id;
 
     private UUIDFilter userId;
 
-    private UUIDFilter scheduleId;
-
-    private BigDecimalFilter totalAmount;
-
-    private BookingStatusFilter status;
-
-    private StringFilter contactEmail;
-
-    private StringFilter contactPhone;
+    private UUIDFilter tripId;
 
     private StringFilter bookingReference;
 
+    private BookingStatusFilter status;
+
+    private BigDecimalFilter totalAmount;
+
+    private StringFilter contactPhone;
+
+    private StringFilter contactEmail;
+
+    private StringFilter specialRequests;
+
     private InstantFilter createdAt;
 
-    private InstantFilter updatedAt;
-
     private InstantFilter expiresAt;
+
+    private LongFilter passengersId;
+
+    private LongFilter historiesId;
 
     private Boolean distinct;
 
     public BookingCriteria() {}
 
     public BookingCriteria(BookingCriteria other) {
-        this.id = other.optionalId().map(UUIDFilter::copy).orElse(null);
+        this.id = other.optionalId().map(LongFilter::copy).orElse(null);
         this.userId = other.optionalUserId().map(UUIDFilter::copy).orElse(null);
-        this.scheduleId = other.optionalScheduleId().map(UUIDFilter::copy).orElse(null);
-        this.totalAmount = other.optionalTotalAmount().map(BigDecimalFilter::copy).orElse(null);
-        this.status = other.optionalStatus().map(BookingStatusFilter::copy).orElse(null);
-        this.contactEmail = other.optionalContactEmail().map(StringFilter::copy).orElse(null);
-        this.contactPhone = other.optionalContactPhone().map(StringFilter::copy).orElse(null);
+        this.tripId = other.optionalTripId().map(UUIDFilter::copy).orElse(null);
         this.bookingReference = other.optionalBookingReference().map(StringFilter::copy).orElse(null);
+        this.status = other.optionalStatus().map(BookingStatusFilter::copy).orElse(null);
+        this.totalAmount = other.optionalTotalAmount().map(BigDecimalFilter::copy).orElse(null);
+        this.contactPhone = other.optionalContactPhone().map(StringFilter::copy).orElse(null);
+        this.contactEmail = other.optionalContactEmail().map(StringFilter::copy).orElse(null);
+        this.specialRequests = other.optionalSpecialRequests().map(StringFilter::copy).orElse(null);
         this.createdAt = other.optionalCreatedAt().map(InstantFilter::copy).orElse(null);
-        this.updatedAt = other.optionalUpdatedAt().map(InstantFilter::copy).orElse(null);
         this.expiresAt = other.optionalExpiresAt().map(InstantFilter::copy).orElse(null);
+        this.passengersId = other.optionalPassengersId().map(LongFilter::copy).orElse(null);
+        this.historiesId = other.optionalHistoriesId().map(LongFilter::copy).orElse(null);
         this.distinct = other.distinct;
     }
 
@@ -86,22 +92,22 @@ public class BookingCriteria implements Serializable, Criteria {
         return new BookingCriteria(this);
     }
 
-    public UUIDFilter getId() {
+    public LongFilter getId() {
         return id;
     }
 
-    public Optional<UUIDFilter> optionalId() {
+    public Optional<LongFilter> optionalId() {
         return Optional.ofNullable(id);
     }
 
-    public UUIDFilter id() {
+    public LongFilter id() {
         if (id == null) {
-            setId(new UUIDFilter());
+            setId(new LongFilter());
         }
         return id;
     }
 
-    public void setId(UUIDFilter id) {
+    public void setId(LongFilter id) {
         this.id = id;
     }
 
@@ -124,99 +130,23 @@ public class BookingCriteria implements Serializable, Criteria {
         this.userId = userId;
     }
 
-    public UUIDFilter getScheduleId() {
-        return scheduleId;
+    public UUIDFilter getTripId() {
+        return tripId;
     }
 
-    public Optional<UUIDFilter> optionalScheduleId() {
-        return Optional.ofNullable(scheduleId);
+    public Optional<UUIDFilter> optionalTripId() {
+        return Optional.ofNullable(tripId);
     }
 
-    public UUIDFilter scheduleId() {
-        if (scheduleId == null) {
-            setScheduleId(new UUIDFilter());
+    public UUIDFilter tripId() {
+        if (tripId == null) {
+            setTripId(new UUIDFilter());
         }
-        return scheduleId;
+        return tripId;
     }
 
-    public void setScheduleId(UUIDFilter scheduleId) {
-        this.scheduleId = scheduleId;
-    }
-
-    public BigDecimalFilter getTotalAmount() {
-        return totalAmount;
-    }
-
-    public Optional<BigDecimalFilter> optionalTotalAmount() {
-        return Optional.ofNullable(totalAmount);
-    }
-
-    public BigDecimalFilter totalAmount() {
-        if (totalAmount == null) {
-            setTotalAmount(new BigDecimalFilter());
-        }
-        return totalAmount;
-    }
-
-    public void setTotalAmount(BigDecimalFilter totalAmount) {
-        this.totalAmount = totalAmount;
-    }
-
-    public BookingStatusFilter getStatus() {
-        return status;
-    }
-
-    public Optional<BookingStatusFilter> optionalStatus() {
-        return Optional.ofNullable(status);
-    }
-
-    public BookingStatusFilter status() {
-        if (status == null) {
-            setStatus(new BookingStatusFilter());
-        }
-        return status;
-    }
-
-    public void setStatus(BookingStatusFilter status) {
-        this.status = status;
-    }
-
-    public StringFilter getContactEmail() {
-        return contactEmail;
-    }
-
-    public Optional<StringFilter> optionalContactEmail() {
-        return Optional.ofNullable(contactEmail);
-    }
-
-    public StringFilter contactEmail() {
-        if (contactEmail == null) {
-            setContactEmail(new StringFilter());
-        }
-        return contactEmail;
-    }
-
-    public void setContactEmail(StringFilter contactEmail) {
-        this.contactEmail = contactEmail;
-    }
-
-    public StringFilter getContactPhone() {
-        return contactPhone;
-    }
-
-    public Optional<StringFilter> optionalContactPhone() {
-        return Optional.ofNullable(contactPhone);
-    }
-
-    public StringFilter contactPhone() {
-        if (contactPhone == null) {
-            setContactPhone(new StringFilter());
-        }
-        return contactPhone;
-    }
-
-    public void setContactPhone(StringFilter contactPhone) {
-        this.contactPhone = contactPhone;
+    public void setTripId(UUIDFilter tripId) {
+        this.tripId = tripId;
     }
 
     public StringFilter getBookingReference() {
@@ -238,6 +168,101 @@ public class BookingCriteria implements Serializable, Criteria {
         this.bookingReference = bookingReference;
     }
 
+    public BookingStatusFilter getStatus() {
+        return status;
+    }
+
+    public Optional<BookingStatusFilter> optionalStatus() {
+        return Optional.ofNullable(status);
+    }
+
+    public BookingStatusFilter status() {
+        if (status == null) {
+            setStatus(new BookingStatusFilter());
+        }
+        return status;
+    }
+
+    public void setStatus(BookingStatusFilter status) {
+        this.status = status;
+    }
+
+    public BigDecimalFilter getTotalAmount() {
+        return totalAmount;
+    }
+
+    public Optional<BigDecimalFilter> optionalTotalAmount() {
+        return Optional.ofNullable(totalAmount);
+    }
+
+    public BigDecimalFilter totalAmount() {
+        if (totalAmount == null) {
+            setTotalAmount(new BigDecimalFilter());
+        }
+        return totalAmount;
+    }
+
+    public void setTotalAmount(BigDecimalFilter totalAmount) {
+        this.totalAmount = totalAmount;
+    }
+
+    public StringFilter getContactPhone() {
+        return contactPhone;
+    }
+
+    public Optional<StringFilter> optionalContactPhone() {
+        return Optional.ofNullable(contactPhone);
+    }
+
+    public StringFilter contactPhone() {
+        if (contactPhone == null) {
+            setContactPhone(new StringFilter());
+        }
+        return contactPhone;
+    }
+
+    public void setContactPhone(StringFilter contactPhone) {
+        this.contactPhone = contactPhone;
+    }
+
+    public StringFilter getContactEmail() {
+        return contactEmail;
+    }
+
+    public Optional<StringFilter> optionalContactEmail() {
+        return Optional.ofNullable(contactEmail);
+    }
+
+    public StringFilter contactEmail() {
+        if (contactEmail == null) {
+            setContactEmail(new StringFilter());
+        }
+        return contactEmail;
+    }
+
+    public void setContactEmail(StringFilter contactEmail) {
+        this.contactEmail = contactEmail;
+    }
+
+    public StringFilter getSpecialRequests() {
+        return specialRequests;
+    }
+
+    public Optional<StringFilter> optionalSpecialRequests() {
+        return Optional.ofNullable(specialRequests);
+    }
+
+    public StringFilter specialRequests() {
+        if (specialRequests == null) {
+            setSpecialRequests(new StringFilter());
+        }
+        return specialRequests;
+    }
+
+    public void setSpecialRequests(StringFilter specialRequests) {
+        this.specialRequests = specialRequests;
+    }
+
     public InstantFilter getCreatedAt() {
         return createdAt;
     }
@@ -257,25 +282,6 @@ public class BookingCriteria implements Serializable, Criteria {
         this.createdAt = createdAt;
     }
 
-    public InstantFilter getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public Optional<InstantFilter> optionalUpdatedAt() {
-        return Optional.ofNullable(updatedAt);
-    }
-
-    public InstantFilter updatedAt() {
-        if (updatedAt == null) {
-            setUpdatedAt(new InstantFilter());
-        }
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(InstantFilter updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
     public InstantFilter getExpiresAt() {
         return expiresAt;
     }
@@ -293,6 +299,44 @@ public class BookingCriteria implements Serializable, Criteria {
 
     public void setExpiresAt(InstantFilter expiresAt) {
         this.expiresAt = expiresAt;
+    }
+
+    public LongFilter getPassengersId() {
+        return passengersId;
+    }
+
+    public Optional<LongFilter> optionalPassengersId() {
+        return Optional.ofNullable(passengersId);
+    }
+
+    public LongFilter passengersId() {
+        if (passengersId == null) {
+            setPassengersId(new LongFilter());
+        }
+        return passengersId;
+    }
+
+    public void setPassengersId(LongFilter passengersId) {
+        this.passengersId = passengersId;
+    }
+
+    public LongFilter getHistoriesId() {
+        return historiesId;
+    }
+
+    public Optional<LongFilter> optionalHistoriesId() {
+        return Optional.ofNullable(historiesId);
+    }
+
+    public LongFilter historiesId() {
+        if (historiesId == null) {
+            setHistoriesId(new LongFilter());
+        }
+        return historiesId;
+    }
+
+    public void setHistoriesId(LongFilter historiesId) {
+        this.historiesId = historiesId;
     }
 
     public Boolean getDistinct() {
@@ -326,15 +370,17 @@ public class BookingCriteria implements Serializable, Criteria {
         return (
             Objects.equals(id, that.id) &&
             Objects.equals(userId, that.userId) &&
-            Objects.equals(scheduleId, that.scheduleId) &&
-            Objects.equals(totalAmount, that.totalAmount) &&
-            Objects.equals(status, that.status) &&
-            Objects.equals(contactEmail, that.contactEmail) &&
-            Objects.equals(contactPhone, that.contactPhone) &&
+            Objects.equals(tripId, that.tripId) &&
             Objects.equals(bookingReference, that.bookingReference) &&
+            Objects.equals(status, that.status) &&
+            Objects.equals(totalAmount, that.totalAmount) &&
+            Objects.equals(contactPhone, that.contactPhone) &&
+            Objects.equals(contactEmail, that.contactEmail) &&
+            Objects.equals(specialRequests, that.specialRequests) &&
             Objects.equals(createdAt, that.createdAt) &&
-            Objects.equals(updatedAt, that.updatedAt) &&
             Objects.equals(expiresAt, that.expiresAt) &&
+            Objects.equals(passengersId, that.passengersId) &&
+            Objects.equals(historiesId, that.historiesId) &&
             Objects.equals(distinct, that.distinct)
         );
     }
@@ -344,15 +390,17 @@ public class BookingCriteria implements Serializable, Criteria {
         return Objects.hash(
             id,
             userId,
-            scheduleId,
-            totalAmount,
-            status,
-            contactEmail,
-            contactPhone,
+            tripId,
             bookingReference,
+            status,
+            totalAmount,
+            contactPhone,
+            contactEmail,
+            specialRequests,
             createdAt,
-            updatedAt,
             expiresAt,
+            passengersId,
+            historiesId,
             distinct
         );
     }
@@ -363,15 +411,17 @@ public class BookingCriteria implements Serializable, Criteria {
         return "BookingCriteria{" +
             optionalId().map(f -> "id=" + f + ", ").orElse("") +
             optionalUserId().map(f -> "userId=" + f + ", ").orElse("") +
-            optionalScheduleId().map(f -> "scheduleId=" + f + ", ").orElse("") +
-            optionalTotalAmount().map(f -> "totalAmount=" + f + ", ").orElse("") +
-            optionalStatus().map(f -> "status=" + f + ", ").orElse("") +
-            optionalContactEmail().map(f -> "contactEmail=" + f + ", ").orElse("") +
-            optionalContactPhone().map(f -> "contactPhone=" + f + ", ").orElse("") +
+            optionalTripId().map(f -> "tripId=" + f + ", ").orElse("") +
             optionalBookingReference().map(f -> "bookingReference=" + f + ", ").orElse("") +
+            optionalStatus().map(f -> "status=" + f + ", ").orElse("") +
+            optionalTotalAmount().map(f -> "totalAmount=" + f + ", ").orElse("") +
+            optionalContactPhone().map(f -> "contactPhone=" + f + ", ").orElse("") +
+            optionalContactEmail().map(f -> "contactEmail=" + f + ", ").orElse("") +
+            optionalSpecialRequests().map(f -> "specialRequests=" + f + ", ").orElse("") +
             optionalCreatedAt().map(f -> "createdAt=" + f + ", ").orElse("") +
-            optionalUpdatedAt().map(f -> "updatedAt=" + f + ", ").orElse("") +
             optionalExpiresAt().map(f -> "expiresAt=" + f + ", ").orElse("") +
+            optionalPassengersId().map(f -> "passengersId=" + f + ", ").orElse("") +
+            optionalHistoriesId().map(f -> "historiesId=" + f + ", ").orElse("") +
             optionalDistinct().map(f -> "distinct=" + f + ", ").orElse("") +
         "}";
     }

@@ -13,7 +13,6 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -84,7 +83,7 @@ public class BookingResource {
      */
     @PutMapping("/{id}")
     public ResponseEntity<BookingDTO> updateBooking(
-        @PathVariable(value = "id", required = false) final UUID id,
+        @PathVariable(value = "id", required = false) final Long id,
         @Valid @RequestBody BookingDTO bookingDTO
     ) throws URISyntaxException {
         LOG.debug("REST request to update Booking : {}, {}", id, bookingDTO);
@@ -118,7 +117,7 @@ public class BookingResource {
      */
     @PatchMapping(value = "/{id}", consumes = { "application/json", "application/merge-patch+json" })
     public ResponseEntity<BookingDTO> partialUpdateBooking(
-        @PathVariable(value = "id", required = false) final UUID id,
+        @PathVariable(value = "id", required = false) final Long id,
         @NotNull @RequestBody BookingDTO bookingDTO
     ) throws URISyntaxException {
         LOG.debug("REST request to partial update Booking partially : {}, {}", id, bookingDTO);
@@ -179,7 +178,7 @@ public class BookingResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the bookingDTO, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/{id}")
-    public ResponseEntity<BookingDTO> getBooking(@PathVariable("id") UUID id) {
+    public ResponseEntity<BookingDTO> getBooking(@PathVariable("id") Long id) {
         LOG.debug("REST request to get Booking : {}", id);
         Optional<BookingDTO> bookingDTO = bookingService.findOne(id);
         return ResponseUtil.wrapOrNotFound(bookingDTO);
@@ -192,7 +191,7 @@ public class BookingResource {
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteBooking(@PathVariable("id") UUID id) {
+    public ResponseEntity<Void> deleteBooking(@PathVariable("id") Long id) {
         LOG.debug("REST request to delete Booking : {}", id);
         bookingService.delete(id);
         return ResponseEntity.noContent()

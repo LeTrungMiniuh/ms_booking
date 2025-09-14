@@ -6,6 +6,7 @@ import com.ticketsystem.booking.repository.BookingRepository;
 import com.ticketsystem.booking.service.criteria.BookingCriteria;
 import com.ticketsystem.booking.service.dto.BookingDTO;
 import com.ticketsystem.booking.service.mapper.BookingMapper;
+import jakarta.persistence.criteria.JoinType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -72,17 +73,19 @@ public class BookingQueryService extends QueryService<Booking> {
             // This has to be called first, because the distinct method returns null
             specification = Specification.allOf(
                 Boolean.TRUE.equals(criteria.getDistinct()) ? distinct(criteria.getDistinct()) : null,
-                buildSpecification(criteria.getId(), Booking_.id),
+                buildRangeSpecification(criteria.getId(), Booking_.id),
                 buildSpecification(criteria.getUserId(), Booking_.userId),
-                buildSpecification(criteria.getScheduleId(), Booking_.scheduleId),
-                buildRangeSpecification(criteria.getTotalAmount(), Booking_.totalAmount),
-                buildSpecification(criteria.getStatus(), Booking_.status),
-                buildStringSpecification(criteria.getContactEmail(), Booking_.contactEmail),
-                buildStringSpecification(criteria.getContactPhone(), Booking_.contactPhone),
+                buildSpecification(criteria.getTripId(), Booking_.tripId),
                 buildStringSpecification(criteria.getBookingReference(), Booking_.bookingReference),
+                buildSpecification(criteria.getStatus(), Booking_.status),
+                buildRangeSpecification(criteria.getTotalAmount(), Booking_.totalAmount),
+                buildStringSpecification(criteria.getContactPhone(), Booking_.contactPhone),
+                buildStringSpecification(criteria.getContactEmail(), Booking_.contactEmail),
+                buildStringSpecification(criteria.getSpecialRequests(), Booking_.specialRequests),
                 buildRangeSpecification(criteria.getCreatedAt(), Booking_.createdAt),
-                buildRangeSpecification(criteria.getUpdatedAt(), Booking_.updatedAt),
-                buildRangeSpecification(criteria.getExpiresAt(), Booking_.expiresAt)
+                buildRangeSpecification(criteria.getExpiresAt(), Booking_.expiresAt),
+                buildSpecification(criteria.getPassengersId(), root -> root.join(Booking_.passengers, JoinType.LEFT).get(Passenger_.id)),
+                buildSpecification(criteria.getHistoriesId(), root -> root.join(Booking_.histories, JoinType.LEFT).get(BookingHistory_.id))
             );
         }
         return specification;

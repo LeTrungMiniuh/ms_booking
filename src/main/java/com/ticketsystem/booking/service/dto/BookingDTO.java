@@ -1,7 +1,6 @@
 package com.ticketsystem.booking.service.dto;
 
 import com.ticketsystem.booking.domain.enumeration.BookingStatus;
-import jakarta.persistence.Lob;
 import jakarta.validation.constraints.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -15,50 +14,39 @@ import java.util.UUID;
 @SuppressWarnings("common-java:DuplicatedBlocks")
 public class BookingDTO implements Serializable {
 
-    @NotNull
-    private UUID id;
+    private Long id;
 
     @NotNull
     private UUID userId;
 
     @NotNull
-    private UUID scheduleId;
-
-    @Lob
-    private String ticketIds;
-
-    @NotNull
-    private BigDecimal totalAmount;
-
-    @NotNull
-    private BookingStatus status;
-
-    @Lob
-    private String passengerDetails;
-
-    @NotNull
-    private String contactEmail;
-
-    @NotNull
-    private String contactPhone;
+    private UUID tripId;
 
     @NotNull
     private String bookingReference;
 
     @NotNull
+    private BookingStatus status;
+
+    @NotNull
+    private BigDecimal totalAmount;
+
+    private String contactPhone;
+
+    private String contactEmail;
+
+    private String specialRequests;
+
+    @NotNull
     private Instant createdAt;
 
-    @NotNull
-    private Instant updatedAt;
-
-    @NotNull
     private Instant expiresAt;
 
-    public UUID getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(UUID id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -70,60 +58,12 @@ public class BookingDTO implements Serializable {
         this.userId = userId;
     }
 
-    public UUID getScheduleId() {
-        return scheduleId;
+    public UUID getTripId() {
+        return tripId;
     }
 
-    public void setScheduleId(UUID scheduleId) {
-        this.scheduleId = scheduleId;
-    }
-
-    public String getTicketIds() {
-        return ticketIds;
-    }
-
-    public void setTicketIds(String ticketIds) {
-        this.ticketIds = ticketIds;
-    }
-
-    public BigDecimal getTotalAmount() {
-        return totalAmount;
-    }
-
-    public void setTotalAmount(BigDecimal totalAmount) {
-        this.totalAmount = totalAmount;
-    }
-
-    public BookingStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(BookingStatus status) {
-        this.status = status;
-    }
-
-    public String getPassengerDetails() {
-        return passengerDetails;
-    }
-
-    public void setPassengerDetails(String passengerDetails) {
-        this.passengerDetails = passengerDetails;
-    }
-
-    public String getContactEmail() {
-        return contactEmail;
-    }
-
-    public void setContactEmail(String contactEmail) {
-        this.contactEmail = contactEmail;
-    }
-
-    public String getContactPhone() {
-        return contactPhone;
-    }
-
-    public void setContactPhone(String contactPhone) {
-        this.contactPhone = contactPhone;
+    public void setTripId(UUID tripId) {
+        this.tripId = tripId;
     }
 
     public String getBookingReference() {
@@ -134,20 +74,52 @@ public class BookingDTO implements Serializable {
         this.bookingReference = bookingReference;
     }
 
+    public BookingStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(BookingStatus status) {
+        this.status = status;
+    }
+
+    public BigDecimal getTotalAmount() {
+        return totalAmount;
+    }
+
+    public void setTotalAmount(BigDecimal totalAmount) {
+        this.totalAmount = totalAmount;
+    }
+
+    public String getContactPhone() {
+        return contactPhone;
+    }
+
+    public void setContactPhone(String contactPhone) {
+        this.contactPhone = contactPhone;
+    }
+
+    public String getContactEmail() {
+        return contactEmail;
+    }
+
+    public void setContactEmail(String contactEmail) {
+        this.contactEmail = contactEmail;
+    }
+
+    public String getSpecialRequests() {
+        return specialRequests;
+    }
+
+    public void setSpecialRequests(String specialRequests) {
+        this.specialRequests = specialRequests;
+    }
+
     public Instant getCreatedAt() {
         return createdAt;
     }
 
     public void setCreatedAt(Instant createdAt) {
         this.createdAt = createdAt;
-    }
-
-    public Instant getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(Instant updatedAt) {
-        this.updatedAt = updatedAt;
     }
 
     public Instant getExpiresAt() {
@@ -183,18 +155,16 @@ public class BookingDTO implements Serializable {
     @Override
     public String toString() {
         return "BookingDTO{" +
-            "id='" + getId() + "'" +
+            "id=" + getId() +
             ", userId='" + getUserId() + "'" +
-            ", scheduleId='" + getScheduleId() + "'" +
-            ", ticketIds='" + getTicketIds() + "'" +
-            ", totalAmount=" + getTotalAmount() +
-            ", status='" + getStatus() + "'" +
-            ", passengerDetails='" + getPassengerDetails() + "'" +
-            ", contactEmail='" + getContactEmail() + "'" +
-            ", contactPhone='" + getContactPhone() + "'" +
+            ", tripId='" + getTripId() + "'" +
             ", bookingReference='" + getBookingReference() + "'" +
+            ", status='" + getStatus() + "'" +
+            ", totalAmount=" + getTotalAmount() +
+            ", contactPhone='" + getContactPhone() + "'" +
+            ", contactEmail='" + getContactEmail() + "'" +
+            ", specialRequests='" + getSpecialRequests() + "'" +
             ", createdAt='" + getCreatedAt() + "'" +
-            ", updatedAt='" + getUpdatedAt() + "'" +
             ", expiresAt='" + getExpiresAt() + "'" +
             "}";
     }
