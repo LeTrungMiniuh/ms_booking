@@ -1,8 +1,10 @@
 package com.ticketsystem.booking.domain;
 
-import static com.ticketsystem.booking.domain.BookingHistoryTestSamples.*;
+import static com.ticketsystem.booking.domain.AppliedPromotionTestSamples.*;
 import static com.ticketsystem.booking.domain.BookingTestSamples.*;
-import static com.ticketsystem.booking.domain.PassengerTestSamples.*;
+import static com.ticketsystem.booking.domain.InvoiceTestSamples.*;
+import static com.ticketsystem.booking.domain.PaymentTransactionTestSamples.*;
+import static com.ticketsystem.booking.domain.TicketTestSamples.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.ticketsystem.booking.web.rest.TestUtil;
@@ -27,46 +29,70 @@ class BookingTest {
     }
 
     @Test
-    void passengersTest() {
+    void invoiceTest() {
         Booking booking = getBookingRandomSampleGenerator();
-        Passenger passengerBack = getPassengerRandomSampleGenerator();
+        Invoice invoiceBack = getInvoiceRandomSampleGenerator();
 
-        booking.addPassengers(passengerBack);
-        assertThat(booking.getPassengers()).containsOnly(passengerBack);
-        assertThat(passengerBack.getBooking()).isEqualTo(booking);
+        booking.setInvoice(invoiceBack);
+        assertThat(booking.getInvoice()).isEqualTo(invoiceBack);
 
-        booking.removePassengers(passengerBack);
-        assertThat(booking.getPassengers()).doesNotContain(passengerBack);
-        assertThat(passengerBack.getBooking()).isNull();
-
-        booking.passengers(new HashSet<>(Set.of(passengerBack)));
-        assertThat(booking.getPassengers()).containsOnly(passengerBack);
-        assertThat(passengerBack.getBooking()).isEqualTo(booking);
-
-        booking.setPassengers(new HashSet<>());
-        assertThat(booking.getPassengers()).doesNotContain(passengerBack);
-        assertThat(passengerBack.getBooking()).isNull();
+        booking.invoice(null);
+        assertThat(booking.getInvoice()).isNull();
     }
 
     @Test
-    void historiesTest() {
+    void paymentTransactionTest() {
         Booking booking = getBookingRandomSampleGenerator();
-        BookingHistory bookingHistoryBack = getBookingHistoryRandomSampleGenerator();
+        PaymentTransaction paymentTransactionBack = getPaymentTransactionRandomSampleGenerator();
 
-        booking.addHistories(bookingHistoryBack);
-        assertThat(booking.getHistories()).containsOnly(bookingHistoryBack);
-        assertThat(bookingHistoryBack.getBooking()).isEqualTo(booking);
+        booking.setPaymentTransaction(paymentTransactionBack);
+        assertThat(booking.getPaymentTransaction()).isEqualTo(paymentTransactionBack);
 
-        booking.removeHistories(bookingHistoryBack);
-        assertThat(booking.getHistories()).doesNotContain(bookingHistoryBack);
-        assertThat(bookingHistoryBack.getBooking()).isNull();
+        booking.paymentTransaction(null);
+        assertThat(booking.getPaymentTransaction()).isNull();
+    }
 
-        booking.histories(new HashSet<>(Set.of(bookingHistoryBack)));
-        assertThat(booking.getHistories()).containsOnly(bookingHistoryBack);
-        assertThat(bookingHistoryBack.getBooking()).isEqualTo(booking);
+    @Test
+    void ticketsTest() {
+        Booking booking = getBookingRandomSampleGenerator();
+        Ticket ticketBack = getTicketRandomSampleGenerator();
 
-        booking.setHistories(new HashSet<>());
-        assertThat(booking.getHistories()).doesNotContain(bookingHistoryBack);
-        assertThat(bookingHistoryBack.getBooking()).isNull();
+        booking.addTickets(ticketBack);
+        assertThat(booking.getTickets()).containsOnly(ticketBack);
+        assertThat(ticketBack.getBooking()).isEqualTo(booking);
+
+        booking.removeTickets(ticketBack);
+        assertThat(booking.getTickets()).doesNotContain(ticketBack);
+        assertThat(ticketBack.getBooking()).isNull();
+
+        booking.tickets(new HashSet<>(Set.of(ticketBack)));
+        assertThat(booking.getTickets()).containsOnly(ticketBack);
+        assertThat(ticketBack.getBooking()).isEqualTo(booking);
+
+        booking.setTickets(new HashSet<>());
+        assertThat(booking.getTickets()).doesNotContain(ticketBack);
+        assertThat(ticketBack.getBooking()).isNull();
+    }
+
+    @Test
+    void appliedPromosTest() {
+        Booking booking = getBookingRandomSampleGenerator();
+        AppliedPromotion appliedPromotionBack = getAppliedPromotionRandomSampleGenerator();
+
+        booking.addAppliedPromos(appliedPromotionBack);
+        assertThat(booking.getAppliedPromos()).containsOnly(appliedPromotionBack);
+        assertThat(appliedPromotionBack.getBooking()).isEqualTo(booking);
+
+        booking.removeAppliedPromos(appliedPromotionBack);
+        assertThat(booking.getAppliedPromos()).doesNotContain(appliedPromotionBack);
+        assertThat(appliedPromotionBack.getBooking()).isNull();
+
+        booking.appliedPromos(new HashSet<>(Set.of(appliedPromotionBack)));
+        assertThat(booking.getAppliedPromos()).containsOnly(appliedPromotionBack);
+        assertThat(appliedPromotionBack.getBooking()).isEqualTo(booking);
+
+        booking.setAppliedPromos(new HashSet<>());
+        assertThat(booking.getAppliedPromos()).doesNotContain(appliedPromotionBack);
+        assertThat(appliedPromotionBack.getBooking()).isNull();
     }
 }

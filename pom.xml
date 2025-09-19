@@ -155,7 +155,6 @@
             <groupId>javax.cache</groupId>
             <artifactId>cache-api</artifactId>
         </dependency> -->
-        
         <dependency>
             <groupId>tech.jhipster</groupId>
             <artifactId>jhipster-framework</artifactId>

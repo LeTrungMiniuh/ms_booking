@@ -6,7 +6,6 @@ import com.ticketsystem.booking.service.TicketService;
 import com.ticketsystem.booking.service.dto.TicketDTO;
 import com.ticketsystem.booking.service.mapper.TicketMapper;
 import java.util.Optional;
-import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -63,13 +62,13 @@ public class TicketServiceImpl implements TicketService {
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<TicketDTO> findOne(UUID id) {
+    public Optional<TicketDTO> findOne(Long id) {
         LOG.debug("Request to get Ticket : {}", id);
         return ticketRepository.findById(id).map(ticketMapper::toDto);
     }
 
     @Override
-    public void delete(UUID id) {
+    public void delete(Long id) {
         LOG.debug("Request to delete Ticket : {}", id);
         ticketRepository.deleteById(id);
     }

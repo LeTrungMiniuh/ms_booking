@@ -76,14 +76,21 @@ class TicketCriteriaTest {
 
     private static void setAllFilters(TicketCriteria ticketCriteria) {
         ticketCriteria.id();
-        ticketCriteria.scheduleId();
-        ticketCriteria.seatNumber();
-        ticketCriteria.seatType();
+        ticketCriteria.ticketCode();
         ticketCriteria.price();
-        ticketCriteria.status();
-        ticketCriteria.reservedUntil();
+        ticketCriteria.qrCode();
+        ticketCriteria.timeFrom();
+        ticketCriteria.timeTo();
+        ticketCriteria.checkedIn();
+        ticketCriteria.tripId();
+        ticketCriteria.routeId();
+        ticketCriteria.tripSeatId();
         ticketCriteria.createdAt();
         ticketCriteria.updatedAt();
+        ticketCriteria.isDeleted();
+        ticketCriteria.deletedAt();
+        ticketCriteria.deletedBy();
+        ticketCriteria.bookingId();
         ticketCriteria.distinct();
     }
 
@@ -91,14 +98,21 @@ class TicketCriteriaTest {
         return new Condition<>(
             criteria ->
                 condition.apply(criteria.getId()) &&
-                condition.apply(criteria.getScheduleId()) &&
-                condition.apply(criteria.getSeatNumber()) &&
-                condition.apply(criteria.getSeatType()) &&
+                condition.apply(criteria.getTicketCode()) &&
                 condition.apply(criteria.getPrice()) &&
-                condition.apply(criteria.getStatus()) &&
-                condition.apply(criteria.getReservedUntil()) &&
+                condition.apply(criteria.getQrCode()) &&
+                condition.apply(criteria.getTimeFrom()) &&
+                condition.apply(criteria.getTimeTo()) &&
+                condition.apply(criteria.getCheckedIn()) &&
+                condition.apply(criteria.getTripId()) &&
+                condition.apply(criteria.getRouteId()) &&
+                condition.apply(criteria.getTripSeatId()) &&
                 condition.apply(criteria.getCreatedAt()) &&
                 condition.apply(criteria.getUpdatedAt()) &&
+                condition.apply(criteria.getIsDeleted()) &&
+                condition.apply(criteria.getDeletedAt()) &&
+                condition.apply(criteria.getDeletedBy()) &&
+                condition.apply(criteria.getBookingId()) &&
                 condition.apply(criteria.getDistinct()),
             "every filter matches"
         );
@@ -108,14 +122,21 @@ class TicketCriteriaTest {
         return new Condition<>(
             criteria ->
                 condition.apply(criteria.getId(), copy.getId()) &&
-                condition.apply(criteria.getScheduleId(), copy.getScheduleId()) &&
-                condition.apply(criteria.getSeatNumber(), copy.getSeatNumber()) &&
-                condition.apply(criteria.getSeatType(), copy.getSeatType()) &&
+                condition.apply(criteria.getTicketCode(), copy.getTicketCode()) &&
                 condition.apply(criteria.getPrice(), copy.getPrice()) &&
-                condition.apply(criteria.getStatus(), copy.getStatus()) &&
-                condition.apply(criteria.getReservedUntil(), copy.getReservedUntil()) &&
+                condition.apply(criteria.getQrCode(), copy.getQrCode()) &&
+                condition.apply(criteria.getTimeFrom(), copy.getTimeFrom()) &&
+                condition.apply(criteria.getTimeTo(), copy.getTimeTo()) &&
+                condition.apply(criteria.getCheckedIn(), copy.getCheckedIn()) &&
+                condition.apply(criteria.getTripId(), copy.getTripId()) &&
+                condition.apply(criteria.getRouteId(), copy.getRouteId()) &&
+                condition.apply(criteria.getTripSeatId(), copy.getTripSeatId()) &&
                 condition.apply(criteria.getCreatedAt(), copy.getCreatedAt()) &&
                 condition.apply(criteria.getUpdatedAt(), copy.getUpdatedAt()) &&
+                condition.apply(criteria.getIsDeleted(), copy.getIsDeleted()) &&
+                condition.apply(criteria.getDeletedAt(), copy.getDeletedAt()) &&
+                condition.apply(criteria.getDeletedBy(), copy.getDeletedBy()) &&
+                condition.apply(criteria.getBookingId(), copy.getBookingId()) &&
                 condition.apply(criteria.getDistinct(), copy.getDistinct()),
             "every filter matches"
         );

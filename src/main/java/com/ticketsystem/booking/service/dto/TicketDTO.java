@@ -1,7 +1,5 @@
 package com.ticketsystem.booking.service.dto;
 
-import com.ticketsystem.booking.domain.enumeration.SeatType;
-import com.ticketsystem.booking.domain.enumeration.TicketStatus;
 import jakarta.validation.constraints.*;
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -15,62 +13,59 @@ import java.util.UUID;
 @SuppressWarnings("common-java:DuplicatedBlocks")
 public class TicketDTO implements Serializable {
 
-    @NotNull
-    private UUID id;
+    private Long id;
 
     @NotNull
-    private UUID scheduleId;
-
-    @NotNull
-    private String seatNumber;
-
-    @NotNull
-    private SeatType seatType;
+    private String ticketCode;
 
     @NotNull
     private BigDecimal price;
 
-    @NotNull
-    private TicketStatus status;
+    private String qrCode;
 
-    private Instant reservedUntil;
+    private Instant timeFrom;
+
+    private Instant timeTo;
+
+    private Boolean checkedIn;
+
+    @NotNull
+    private UUID tripId;
+
+    @NotNull
+    private UUID routeId;
+
+    @NotNull
+    private UUID tripSeatId;
 
     @NotNull
     private Instant createdAt;
 
-    @NotNull
     private Instant updatedAt;
 
-    public UUID getId() {
+    private Boolean isDeleted;
+
+    private Instant deletedAt;
+
+    private UUID deletedBy;
+
+    @NotNull
+    private BookingDTO booking;
+
+    public Long getId() {
         return id;
     }
 
-    public void setId(UUID id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
-    public UUID getScheduleId() {
-        return scheduleId;
+    public String getTicketCode() {
+        return ticketCode;
     }
 
-    public void setScheduleId(UUID scheduleId) {
-        this.scheduleId = scheduleId;
-    }
-
-    public String getSeatNumber() {
-        return seatNumber;
-    }
-
-    public void setSeatNumber(String seatNumber) {
-        this.seatNumber = seatNumber;
-    }
-
-    public SeatType getSeatType() {
-        return seatType;
-    }
-
-    public void setSeatType(SeatType seatType) {
-        this.seatType = seatType;
+    public void setTicketCode(String ticketCode) {
+        this.ticketCode = ticketCode;
     }
 
     public BigDecimal getPrice() {
@@ -81,20 +76,60 @@ public class TicketDTO implements Serializable {
         this.price = price;
     }
 
-    public TicketStatus getStatus() {
-        return status;
+    public String getQrCode() {
+        return qrCode;
     }
 
-    public void setStatus(TicketStatus status) {
-        this.status = status;
+    public void setQrCode(String qrCode) {
+        this.qrCode = qrCode;
     }
 
-    public Instant getReservedUntil() {
-        return reservedUntil;
+    public Instant getTimeFrom() {
+        return timeFrom;
     }
 
-    public void setReservedUntil(Instant reservedUntil) {
-        this.reservedUntil = reservedUntil;
+    public void setTimeFrom(Instant timeFrom) {
+        this.timeFrom = timeFrom;
+    }
+
+    public Instant getTimeTo() {
+        return timeTo;
+    }
+
+    public void setTimeTo(Instant timeTo) {
+        this.timeTo = timeTo;
+    }
+
+    public Boolean getCheckedIn() {
+        return checkedIn;
+    }
+
+    public void setCheckedIn(Boolean checkedIn) {
+        this.checkedIn = checkedIn;
+    }
+
+    public UUID getTripId() {
+        return tripId;
+    }
+
+    public void setTripId(UUID tripId) {
+        this.tripId = tripId;
+    }
+
+    public UUID getRouteId() {
+        return routeId;
+    }
+
+    public void setRouteId(UUID routeId) {
+        this.routeId = routeId;
+    }
+
+    public UUID getTripSeatId() {
+        return tripSeatId;
+    }
+
+    public void setTripSeatId(UUID tripSeatId) {
+        this.tripSeatId = tripSeatId;
     }
 
     public Instant getCreatedAt() {
@@ -111,6 +146,38 @@ public class TicketDTO implements Serializable {
 
     public void setUpdatedAt(Instant updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public Boolean getIsDeleted() {
+        return isDeleted;
+    }
+
+    public void setIsDeleted(Boolean isDeleted) {
+        this.isDeleted = isDeleted;
+    }
+
+    public Instant getDeletedAt() {
+        return deletedAt;
+    }
+
+    public void setDeletedAt(Instant deletedAt) {
+        this.deletedAt = deletedAt;
+    }
+
+    public UUID getDeletedBy() {
+        return deletedBy;
+    }
+
+    public void setDeletedBy(UUID deletedBy) {
+        this.deletedBy = deletedBy;
+    }
+
+    public BookingDTO getBooking() {
+        return booking;
+    }
+
+    public void setBooking(BookingDTO booking) {
+        this.booking = booking;
     }
 
     @Override
@@ -138,15 +205,22 @@ public class TicketDTO implements Serializable {
     @Override
     public String toString() {
         return "TicketDTO{" +
-            "id='" + getId() + "'" +
-            ", scheduleId='" + getScheduleId() + "'" +
-            ", seatNumber='" + getSeatNumber() + "'" +
-            ", seatType='" + getSeatType() + "'" +
+            "id=" + getId() +
+            ", ticketCode='" + getTicketCode() + "'" +
             ", price=" + getPrice() +
-            ", status='" + getStatus() + "'" +
-            ", reservedUntil='" + getReservedUntil() + "'" +
+            ", qrCode='" + getQrCode() + "'" +
+            ", timeFrom='" + getTimeFrom() + "'" +
+            ", timeTo='" + getTimeTo() + "'" +
+            ", checkedIn='" + getCheckedIn() + "'" +
+            ", tripId='" + getTripId() + "'" +
+            ", routeId='" + getRouteId() + "'" +
+            ", tripSeatId='" + getTripSeatId() + "'" +
             ", createdAt='" + getCreatedAt() + "'" +
             ", updatedAt='" + getUpdatedAt() + "'" +
+            ", isDeleted='" + getIsDeleted() + "'" +
+            ", deletedAt='" + getDeletedAt() + "'" +
+            ", deletedBy='" + getDeletedBy() + "'" +
+            ", booking=" + getBooking() +
             "}";
     }
 }

@@ -79,10 +79,12 @@ public class CacheConfiguration {
     public JCacheManagerCustomizer cacheManagerCustomizer(javax.cache.configuration.Configuration<Object, Object> jcacheConfiguration) {
         return cm -> {
             createCache(cm, com.ticketsystem.booking.domain.Booking.class.getName(), jcacheConfiguration);
-            createCache(cm, com.ticketsystem.booking.domain.Booking.class.getName() + ".passengers", jcacheConfiguration);
-            createCache(cm, com.ticketsystem.booking.domain.Booking.class.getName() + ".histories", jcacheConfiguration);
-            createCache(cm, com.ticketsystem.booking.domain.Passenger.class.getName(), jcacheConfiguration);
-            createCache(cm, com.ticketsystem.booking.domain.BookingHistory.class.getName(), jcacheConfiguration);
+            createCache(cm, com.ticketsystem.booking.domain.Booking.class.getName() + ".tickets", jcacheConfiguration);
+            createCache(cm, com.ticketsystem.booking.domain.Booking.class.getName() + ".appliedPromos", jcacheConfiguration);
+            createCache(cm, com.ticketsystem.booking.domain.Ticket.class.getName(), jcacheConfiguration);
+            createCache(cm, com.ticketsystem.booking.domain.Invoice.class.getName(), jcacheConfiguration);
+            createCache(cm, com.ticketsystem.booking.domain.PaymentTransaction.class.getName(), jcacheConfiguration);
+            createCache(cm, com.ticketsystem.booking.domain.AppliedPromotion.class.getName(), jcacheConfiguration);
             // jhipster-needle-redis-add-entry
         };
     }

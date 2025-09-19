@@ -1,5 +1,6 @@
 package com.ticketsystem.booking.domain;
 
+import static com.ticketsystem.booking.domain.BookingTestSamples.*;
 import static com.ticketsystem.booking.domain.TicketTestSamples.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -20,5 +21,17 @@ class TicketTest {
 
         ticket2 = getTicketSample2();
         assertThat(ticket1).isNotEqualTo(ticket2);
+    }
+
+    @Test
+    void bookingTest() {
+        Ticket ticket = getTicketRandomSampleGenerator();
+        Booking bookingBack = getBookingRandomSampleGenerator();
+
+        ticket.setBooking(bookingBack);
+        assertThat(ticket.getBooking()).isEqualTo(bookingBack);
+
+        ticket.booking(null);
+        assertThat(ticket.getBooking()).isNull();
     }
 }

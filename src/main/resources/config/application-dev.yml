@@ -18,14 +18,9 @@ server:
   port: ${SERVER_PORT:8084}
   forward-headers-strategy: native
   sql-port: ${SQL_PORT:3309}
-  sql-name: ${SQL_NAME:ms_booking}
+  sql-name: ${SQL_NAME:booking}
 
 spring:
-  jpa:
-    properties:
-      hibernate.cache.use_second_level_cache: false
-      hibernate.cache.use_query_cache: false
-
   config:
     # Import shared config first
     import: optional:file:/home/phungvip/Desktop/work-space/ticket-store/backend/ticket-store-central-config/application-dev.yml

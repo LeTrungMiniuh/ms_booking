@@ -48,21 +48,22 @@ public class BookingAsserts {
     public static void assertBookingUpdatableFieldsEquals(Booking expected, Booking actual) {
         assertThat(actual)
             .as("Verify Booking relevant properties")
-            .satisfies(a -> assertThat(a.getUserId()).as("check userId").isEqualTo(expected.getUserId()))
-            .satisfies(a -> assertThat(a.getTripId()).as("check tripId").isEqualTo(expected.getTripId()))
-            .satisfies(a -> assertThat(a.getBookingReference()).as("check bookingReference").isEqualTo(expected.getBookingReference()))
+            .satisfies(a -> assertThat(a.getBookingCode()).as("check bookingCode").isEqualTo(expected.getBookingCode()))
             .satisfies(a -> assertThat(a.getStatus()).as("check status").isEqualTo(expected.getStatus()))
+            .satisfies(a -> assertThat(a.getQuantity()).as("check quantity").isEqualTo(expected.getQuantity()))
             .satisfies(a ->
                 assertThat(a.getTotalAmount())
                     .as("check totalAmount")
                     .usingComparator(bigDecimalCompareTo)
                     .isEqualTo(expected.getTotalAmount())
             )
-            .satisfies(a -> assertThat(a.getContactPhone()).as("check contactPhone").isEqualTo(expected.getContactPhone()))
-            .satisfies(a -> assertThat(a.getContactEmail()).as("check contactEmail").isEqualTo(expected.getContactEmail()))
-            .satisfies(a -> assertThat(a.getSpecialRequests()).as("check specialRequests").isEqualTo(expected.getSpecialRequests()))
+            .satisfies(a -> assertThat(a.getCreatedTime()).as("check createdTime").isEqualTo(expected.getCreatedTime()))
+            .satisfies(a -> assertThat(a.getCustomerId()).as("check customerId").isEqualTo(expected.getCustomerId()))
             .satisfies(a -> assertThat(a.getCreatedAt()).as("check createdAt").isEqualTo(expected.getCreatedAt()))
-            .satisfies(a -> assertThat(a.getExpiresAt()).as("check expiresAt").isEqualTo(expected.getExpiresAt()));
+            .satisfies(a -> assertThat(a.getUpdatedAt()).as("check updatedAt").isEqualTo(expected.getUpdatedAt()))
+            .satisfies(a -> assertThat(a.getIsDeleted()).as("check isDeleted").isEqualTo(expected.getIsDeleted()))
+            .satisfies(a -> assertThat(a.getDeletedAt()).as("check deletedAt").isEqualTo(expected.getDeletedAt()))
+            .satisfies(a -> assertThat(a.getDeletedBy()).as("check deletedBy").isEqualTo(expected.getDeletedBy()));
     }
 
     /**
@@ -72,6 +73,10 @@ public class BookingAsserts {
      * @param actual the actual entity
      */
     public static void assertBookingUpdatableRelationshipsEquals(Booking expected, Booking actual) {
-        // empty method
+        assertThat(actual)
+            .as("Verify Booking relationships")
+            .satisfies(a -> assertThat(a.getInvoice()).as("check invoice").isEqualTo(expected.getInvoice()))
+            .satisfies(a -> assertThat(a.getPaymentTransaction()).as("check paymentTransaction").isEqualTo(expected.getPaymentTransaction())
+            );
     }
 }

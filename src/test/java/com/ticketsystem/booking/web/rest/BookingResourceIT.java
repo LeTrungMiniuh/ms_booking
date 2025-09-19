@@ -12,6 +12,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ticketsystem.booking.IntegrationTest;
 import com.ticketsystem.booking.domain.Booking;
+import com.ticketsystem.booking.domain.Invoice;
+import com.ticketsystem.booking.domain.PaymentTransaction;
 import com.ticketsystem.booking.domain.enumeration.BookingStatus;
 import com.ticketsystem.booking.repository.BookingRepository;
 import com.ticketsystem.booking.service.dto.BookingDTO;
@@ -41,36 +43,40 @@ import org.springframework.transaction.annotation.Transactional;
 @WithMockUser
 class BookingResourceIT {
 
-    private static final UUID DEFAULT_USER_ID = UUID.randomUUID();
-    private static final UUID UPDATED_USER_ID = UUID.randomUUID();
-
-    private static final UUID DEFAULT_TRIP_ID = UUID.randomUUID();
-    private static final UUID UPDATED_TRIP_ID = UUID.randomUUID();
-
-    private static final String DEFAULT_BOOKING_REFERENCE = "AAAAAAAAAA";
-    private static final String UPDATED_BOOKING_REFERENCE = "BBBBBBBBBB";
+    private static final String DEFAULT_BOOKING_CODE = "AAAAAAAAAA";
+    private static final String UPDATED_BOOKING_CODE = "BBBBBBBBBB";
 
     private static final BookingStatus DEFAULT_STATUS = BookingStatus.DRAFT;
-    private static final BookingStatus UPDATED_STATUS = BookingStatus.PENDING_PAYMENT;
+    private static final BookingStatus UPDATED_STATUS = BookingStatus.AWAITING_PAYMENT;
+
+    private static final Integer DEFAULT_QUANTITY = 1;
+    private static final Integer UPDATED_QUANTITY = 2;
+    private static final Integer SMALLER_QUANTITY = 1 - 1;
 
     private static final BigDecimal DEFAULT_TOTAL_AMOUNT = new BigDecimal(1);
     private static final BigDecimal UPDATED_TOTAL_AMOUNT = new BigDecimal(2);
     private static final BigDecimal SMALLER_TOTAL_AMOUNT = new BigDecimal(1 - 1);
 
-    private static final String DEFAULT_CONTACT_PHONE = "AAAAAAAAAA";
-    private static final String UPDATED_CONTACT_PHONE = "BBBBBBBBBB";
+    private static final Instant DEFAULT_CREATED_TIME = Instant.ofEpochMilli(0L);
+    private static final Instant UPDATED_CREATED_TIME = Instant.now().truncatedTo(ChronoUnit.MILLIS);
 
-    private static final String DEFAULT_CONTACT_EMAIL = "AAAAAAAAAA";
-    private static final String UPDATED_CONTACT_EMAIL = "BBBBBBBBBB";
-
-    private static final String DEFAULT_SPECIAL_REQUESTS = "AAAAAAAAAA";
-    private static final String UPDATED_SPECIAL_REQUESTS = "BBBBBBBBBB";
+    private static final UUID DEFAULT_CUSTOMER_ID = UUID.randomUUID();
+    private static final UUID UPDATED_CUSTOMER_ID = UUID.randomUUID();
 
     private static final Instant DEFAULT_CREATED_AT = Instant.ofEpochMilli(0L);
     private static final Instant UPDATED_CREATED_AT = Instant.now().truncatedTo(ChronoUnit.MILLIS);
 
-    private static final Instant DEFAULT_EXPIRES_AT = Instant.ofEpochMilli(0L);
-    private static final Instant UPDATED_EXPIRES_AT = Instant.now().truncatedTo(ChronoUnit.MILLIS);
+    private static final Instant DEFAULT_UPDATED_AT = Instant.ofEpochMilli(0L);
+    private static final Instant UPDATED_UPDATED_AT = Instant.now().truncatedTo(ChronoUnit.MILLIS);
+
+    private static final Boolean DEFAULT_IS_DELETED = false;
+    private static final Boolean UPDATED_IS_DELETED = true;
+
+    private static final Instant DEFAULT_DELETED_AT = Instant.ofEpochMilli(0L);
+    private static final Instant UPDATED_DELETED_AT = Instant.now().truncatedTo(ChronoUnit.MILLIS);
+
+    private static final UUID DEFAULT_DELETED_BY = UUID.randomUUID();
+    private static final UUID UPDATED_DELETED_BY = UUID.randomUUID();
 
     private static final String ENTITY_API_URL = "/api/bookings";
     private static final String ENTITY_API_URL_ID = ENTITY_API_URL + "/{id}";
@@ -105,16 +111,17 @@ class BookingResourceIT {
      */
     public static Booking createEntity() {
         return new Booking()
-            .userId(DEFAULT_USER_ID)
-            .tripId(DEFAULT_TRIP_ID)
-            .bookingReference(DEFAULT_BOOKING_REFERENCE)
+            .bookingCode(DEFAULT_BOOKING_CODE)
             .status(DEFAULT_STATUS)
+            .quantity(DEFAULT_QUANTITY)
             .totalAmount(DEFAULT_TOTAL_AMOUNT)
-            .contactPhone(DEFAULT_CONTACT_PHONE)
-            .contactEmail(DEFAULT_CONTACT_EMAIL)
-            .specialRequests(DEFAULT_SPECIAL_REQUESTS)
+            .createdTime(DEFAULT_CREATED_TIME)
+            .customerId(DEFAULT_CUSTOMER_ID)
             .createdAt(DEFAULT_CREATED_AT)
-            .expiresAt(DEFAULT_EXPIRES_AT);
+            .updatedAt(DEFAULT_UPDATED_AT)
+            .isDeleted(DEFAULT_IS_DELETED)
+            .deletedAt(DEFAULT_DELETED_AT)
+            .deletedBy(DEFAULT_DELETED_BY);
     }
 
     /**
@@ -125,16 +132,17 @@ class BookingResourceIT {
      */
     public static Booking createUpdatedEntity() {
         return new Booking()
-            .userId(UPDATED_USER_ID)
-            .tripId(UPDATED_TRIP_ID)
-            .bookingReference(UPDATED_BOOKING_REFERENCE)
+            .bookingCode(UPDATED_BOOKING_CODE)
             .status(UPDATED_STATUS)
+            .quantity(UPDATED_QUANTITY)
             .totalAmount(UPDATED_TOTAL_AMOUNT)
-            .contactPhone(UPDATED_CONTACT_PHONE)
-            .contactEmail(UPDATED_CONTACT_EMAIL)
-            .specialRequests(UPDATED_SPECIAL_REQUESTS)
+            .createdTime(UPDATED_CREATED_TIME)
+            .customerId(UPDATED_CUSTOMER_ID)
             .createdAt(UPDATED_CREATED_AT)
-            .expiresAt(UPDATED_EXPIRES_AT);
+            .updatedAt(UPDATED_UPDATED_AT)
+            .isDeleted(UPDATED_IS_DELETED)
+            .deletedAt(UPDATED_DELETED_AT)
+            .deletedBy(UPDATED_DELETED_BY);
     }
 
     @BeforeEach
@@ -196,44 +204,10 @@ class BookingResourceIT {
 
     @Test
     @Transactional
-    void checkUserIdIsRequired() throws Exception {
+    void checkBookingCodeIsRequired() throws Exception {
         long databaseSizeBeforeTest = getRepositoryCount();
         // set the field null
-        booking.setUserId(null);
-
-        // Create the Booking, which fails.
-        BookingDTO bookingDTO = bookingMapper.toDto(booking);
-
-        restBookingMockMvc
-            .perform(post(ENTITY_API_URL).with(csrf()).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(bookingDTO)))
-            .andExpect(status().isBadRequest());
-
-        assertSameRepositoryCount(databaseSizeBeforeTest);
-    }
-
-    @Test
-    @Transactional
-    void checkTripIdIsRequired() throws Exception {
-        long databaseSizeBeforeTest = getRepositoryCount();
-        // set the field null
-        booking.setTripId(null);
-
-        // Create the Booking, which fails.
-        BookingDTO bookingDTO = bookingMapper.toDto(booking);
-
-        restBookingMockMvc
-            .perform(post(ENTITY_API_URL).with(csrf()).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(bookingDTO)))
-            .andExpect(status().isBadRequest());
-
-        assertSameRepositoryCount(databaseSizeBeforeTest);
-    }
-
-    @Test
-    @Transactional
-    void checkBookingReferenceIsRequired() throws Exception {
-        long databaseSizeBeforeTest = getRepositoryCount();
-        // set the field null
-        booking.setBookingReference(null);
+        booking.setBookingCode(null);
 
         // Create the Booking, which fails.
         BookingDTO bookingDTO = bookingMapper.toDto(booking);
@@ -281,6 +255,40 @@ class BookingResourceIT {
 
     @Test
     @Transactional
+    void checkCreatedTimeIsRequired() throws Exception {
+        long databaseSizeBeforeTest = getRepositoryCount();
+        // set the field null
+        booking.setCreatedTime(null);
+
+        // Create the Booking, which fails.
+        BookingDTO bookingDTO = bookingMapper.toDto(booking);
+
+        restBookingMockMvc
+            .perform(post(ENTITY_API_URL).with(csrf()).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(bookingDTO)))
+            .andExpect(status().isBadRequest());
+
+        assertSameRepositoryCount(databaseSizeBeforeTest);
+    }
+
+    @Test
+    @Transactional
+    void checkCustomerIdIsRequired() throws Exception {
+        long databaseSizeBeforeTest = getRepositoryCount();
+        // set the field null
+        booking.setCustomerId(null);
+
+        // Create the Booking, which fails.
+        BookingDTO bookingDTO = bookingMapper.toDto(booking);
+
+        restBookingMockMvc
+            .perform(post(ENTITY_API_URL).with(csrf()).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(bookingDTO)))
+            .andExpect(status().isBadRequest());
+
+        assertSameRepositoryCount(databaseSizeBeforeTest);
+    }
+
+    @Test
+    @Transactional
     void checkCreatedAtIsRequired() throws Exception {
         long databaseSizeBeforeTest = getRepositoryCount();
         // set the field null
@@ -308,16 +316,17 @@ class BookingResourceIT {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(booking.getId().intValue())))
-            .andExpect(jsonPath("$.[*].userId").value(hasItem(DEFAULT_USER_ID.toString())))
-            .andExpect(jsonPath("$.[*].tripId").value(hasItem(DEFAULT_TRIP_ID.toString())))
-            .andExpect(jsonPath("$.[*].bookingReference").value(hasItem(DEFAULT_BOOKING_REFERENCE)))
+            .andExpect(jsonPath("$.[*].bookingCode").value(hasItem(DEFAULT_BOOKING_CODE)))
             .andExpect(jsonPath("$.[*].status").value(hasItem(DEFAULT_STATUS.toString())))
+            .andExpect(jsonPath("$.[*].quantity").value(hasItem(DEFAULT_QUANTITY)))
             .andExpect(jsonPath("$.[*].totalAmount").value(hasItem(sameNumber(DEFAULT_TOTAL_AMOUNT))))
-            .andExpect(jsonPath("$.[*].contactPhone").value(hasItem(DEFAULT_CONTACT_PHONE)))
-            .andExpect(jsonPath("$.[*].contactEmail").value(hasItem(DEFAULT_CONTACT_EMAIL)))
-            .andExpect(jsonPath("$.[*].specialRequests").value(hasItem(DEFAULT_SPECIAL_REQUESTS)))
+            .andExpect(jsonPath("$.[*].createdTime").value(hasItem(DEFAULT_CREATED_TIME.toString())))
+            .andExpect(jsonPath("$.[*].customerId").value(hasItem(DEFAULT_CUSTOMER_ID.toString())))
             .andExpect(jsonPath("$.[*].createdAt").value(hasItem(DEFAULT_CREATED_AT.toString())))
-            .andExpect(jsonPath("$.[*].expiresAt").value(hasItem(DEFAULT_EXPIRES_AT.toString())));
+            .andExpect(jsonPath("$.[*].updatedAt").value(hasItem(DEFAULT_UPDATED_AT.toString())))
+            .andExpect(jsonPath("$.[*].isDeleted").value(hasItem(DEFAULT_IS_DELETED)))
+            .andExpect(jsonPath("$.[*].deletedAt").value(hasItem(DEFAULT_DELETED_AT.toString())))
+            .andExpect(jsonPath("$.[*].deletedBy").value(hasItem(DEFAULT_DELETED_BY.toString())));
     }
 
     @Test
@@ -332,16 +341,17 @@ class BookingResourceIT {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.id").value(booking.getId().intValue()))
-            .andExpect(jsonPath("$.userId").value(DEFAULT_USER_ID.toString()))
-            .andExpect(jsonPath("$.tripId").value(DEFAULT_TRIP_ID.toString()))
-            .andExpect(jsonPath("$.bookingReference").value(DEFAULT_BOOKING_REFERENCE))
+            .andExpect(jsonPath("$.bookingCode").value(DEFAULT_BOOKING_CODE))
             .andExpect(jsonPath("$.status").value(DEFAULT_STATUS.toString()))
+            .andExpect(jsonPath("$.quantity").value(DEFAULT_QUANTITY))
             .andExpect(jsonPath("$.totalAmount").value(sameNumber(DEFAULT_TOTAL_AMOUNT)))
-            .andExpect(jsonPath("$.contactPhone").value(DEFAULT_CONTACT_PHONE))
-            .andExpect(jsonPath("$.contactEmail").value(DEFAULT_CONTACT_EMAIL))
-            .andExpect(jsonPath("$.specialRequests").value(DEFAULT_SPECIAL_REQUESTS))
+            .andExpect(jsonPath("$.createdTime").value(DEFAULT_CREATED_TIME.toString()))
+            .andExpect(jsonPath("$.customerId").value(DEFAULT_CUSTOMER_ID.toString()))
             .andExpect(jsonPath("$.createdAt").value(DEFAULT_CREATED_AT.toString()))
-            .andExpect(jsonPath("$.expiresAt").value(DEFAULT_EXPIRES_AT.toString()));
+            .andExpect(jsonPath("$.updatedAt").value(DEFAULT_UPDATED_AT.toString()))
+            .andExpect(jsonPath("$.isDeleted").value(DEFAULT_IS_DELETED))
+            .andExpect(jsonPath("$.deletedAt").value(DEFAULT_DELETED_AT.toString()))
+            .andExpect(jsonPath("$.deletedBy").value(DEFAULT_DELETED_BY.toString()));
     }
 
     @Test
@@ -361,124 +371,55 @@ class BookingResourceIT {
 
     @Test
     @Transactional
-    void getAllBookingsByUserIdIsEqualToSomething() throws Exception {
+    void getAllBookingsByBookingCodeIsEqualToSomething() throws Exception {
         // Initialize the database
         insertedBooking = bookingRepository.saveAndFlush(booking);
 
-        // Get all the bookingList where userId equals to
-        defaultBookingFiltering("userId.equals=" + DEFAULT_USER_ID, "userId.equals=" + UPDATED_USER_ID);
+        // Get all the bookingList where bookingCode equals to
+        defaultBookingFiltering("bookingCode.equals=" + DEFAULT_BOOKING_CODE, "bookingCode.equals=" + UPDATED_BOOKING_CODE);
     }
 
     @Test
     @Transactional
-    void getAllBookingsByUserIdIsInShouldWork() throws Exception {
+    void getAllBookingsByBookingCodeIsInShouldWork() throws Exception {
         // Initialize the database
         insertedBooking = bookingRepository.saveAndFlush(booking);
 
-        // Get all the bookingList where userId in
-        defaultBookingFiltering("userId.in=" + DEFAULT_USER_ID + "," + UPDATED_USER_ID, "userId.in=" + UPDATED_USER_ID);
-    }
-
-    @Test
-    @Transactional
-    void getAllBookingsByUserIdIsNullOrNotNull() throws Exception {
-        // Initialize the database
-        insertedBooking = bookingRepository.saveAndFlush(booking);
-
-        // Get all the bookingList where userId is not null
-        defaultBookingFiltering("userId.specified=true", "userId.specified=false");
-    }
-
-    @Test
-    @Transactional
-    void getAllBookingsByTripIdIsEqualToSomething() throws Exception {
-        // Initialize the database
-        insertedBooking = bookingRepository.saveAndFlush(booking);
-
-        // Get all the bookingList where tripId equals to
-        defaultBookingFiltering("tripId.equals=" + DEFAULT_TRIP_ID, "tripId.equals=" + UPDATED_TRIP_ID);
-    }
-
-    @Test
-    @Transactional
-    void getAllBookingsByTripIdIsInShouldWork() throws Exception {
-        // Initialize the database
-        insertedBooking = bookingRepository.saveAndFlush(booking);
-
-        // Get all the bookingList where tripId in
-        defaultBookingFiltering("tripId.in=" + DEFAULT_TRIP_ID + "," + UPDATED_TRIP_ID, "tripId.in=" + UPDATED_TRIP_ID);
-    }
-
-    @Test
-    @Transactional
-    void getAllBookingsByTripIdIsNullOrNotNull() throws Exception {
-        // Initialize the database
-        insertedBooking = bookingRepository.saveAndFlush(booking);
-
-        // Get all the bookingList where tripId is not null
-        defaultBookingFiltering("tripId.specified=true", "tripId.specified=false");
-    }
-
-    @Test
-    @Transactional
-    void getAllBookingsByBookingReferenceIsEqualToSomething() throws Exception {
-        // Initialize the database
-        insertedBooking = bookingRepository.saveAndFlush(booking);
-
-        // Get all the bookingList where bookingReference equals to
+        // Get all the bookingList where bookingCode in
         defaultBookingFiltering(
-            "bookingReference.equals=" + DEFAULT_BOOKING_REFERENCE,
-            "bookingReference.equals=" + UPDATED_BOOKING_REFERENCE
+            "bookingCode.in=" + DEFAULT_BOOKING_CODE + "," + UPDATED_BOOKING_CODE,
+            "bookingCode.in=" + UPDATED_BOOKING_CODE
         );
     }
 
     @Test
     @Transactional
-    void getAllBookingsByBookingReferenceIsInShouldWork() throws Exception {
+    void getAllBookingsByBookingCodeIsNullOrNotNull() throws Exception {
         // Initialize the database
         insertedBooking = bookingRepository.saveAndFlush(booking);
 
-        // Get all the bookingList where bookingReference in
-        defaultBookingFiltering(
-            "bookingReference.in=" + DEFAULT_BOOKING_REFERENCE + "," + UPDATED_BOOKING_REFERENCE,
-            "bookingReference.in=" + UPDATED_BOOKING_REFERENCE
-        );
+        // Get all the bookingList where bookingCode is not null
+        defaultBookingFiltering("bookingCode.specified=true", "bookingCode.specified=false");
     }
 
     @Test
     @Transactional
-    void getAllBookingsByBookingReferenceIsNullOrNotNull() throws Exception {
+    void getAllBookingsByBookingCodeContainsSomething() throws Exception {
         // Initialize the database
         insertedBooking = bookingRepository.saveAndFlush(booking);
 
-        // Get all the bookingList where bookingReference is not null
-        defaultBookingFiltering("bookingReference.specified=true", "bookingReference.specified=false");
+        // Get all the bookingList where bookingCode contains
+        defaultBookingFiltering("bookingCode.contains=" + DEFAULT_BOOKING_CODE, "bookingCode.contains=" + UPDATED_BOOKING_CODE);
     }
 
     @Test
     @Transactional
-    void getAllBookingsByBookingReferenceContainsSomething() throws Exception {
+    void getAllBookingsByBookingCodeNotContainsSomething() throws Exception {
         // Initialize the database
         insertedBooking = bookingRepository.saveAndFlush(booking);
 
-        // Get all the bookingList where bookingReference contains
-        defaultBookingFiltering(
-            "bookingReference.contains=" + DEFAULT_BOOKING_REFERENCE,
-            "bookingReference.contains=" + UPDATED_BOOKING_REFERENCE
-        );
-    }
-
-    @Test
-    @Transactional
-    void getAllBookingsByBookingReferenceNotContainsSomething() throws Exception {
-        // Initialize the database
-        insertedBooking = bookingRepository.saveAndFlush(booking);
-
-        // Get all the bookingList where bookingReference does not contain
-        defaultBookingFiltering(
-            "bookingReference.doesNotContain=" + UPDATED_BOOKING_REFERENCE,
-            "bookingReference.doesNotContain=" + DEFAULT_BOOKING_REFERENCE
-        );
+        // Get all the bookingList where bookingCode does not contain
+        defaultBookingFiltering("bookingCode.doesNotContain=" + UPDATED_BOOKING_CODE, "bookingCode.doesNotContain=" + DEFAULT_BOOKING_CODE);
     }
 
     @Test
@@ -509,6 +450,76 @@ class BookingResourceIT {
 
         // Get all the bookingList where status is not null
         defaultBookingFiltering("status.specified=true", "status.specified=false");
+    }
+
+    @Test
+    @Transactional
+    void getAllBookingsByQuantityIsEqualToSomething() throws Exception {
+        // Initialize the database
+        insertedBooking = bookingRepository.saveAndFlush(booking);
+
+        // Get all the bookingList where quantity equals to
+        defaultBookingFiltering("quantity.equals=" + DEFAULT_QUANTITY, "quantity.equals=" + UPDATED_QUANTITY);
+    }
+
+    @Test
+    @Transactional
+    void getAllBookingsByQuantityIsInShouldWork() throws Exception {
+        // Initialize the database
+        insertedBooking = bookingRepository.saveAndFlush(booking);
+
+        // Get all the bookingList where quantity in
+        defaultBookingFiltering("quantity.in=" + DEFAULT_QUANTITY + "," + UPDATED_QUANTITY, "quantity.in=" + UPDATED_QUANTITY);
+    }
+
+    @Test
+    @Transactional
+    void getAllBookingsByQuantityIsNullOrNotNull() throws Exception {
+        // Initialize the database
+        insertedBooking = bookingRepository.saveAndFlush(booking);
+
+        // Get all the bookingList where quantity is not null
+        defaultBookingFiltering("quantity.specified=true", "quantity.specified=false");
+    }
+
+    @Test
+    @Transactional
+    void getAllBookingsByQuantityIsGreaterThanOrEqualToSomething() throws Exception {
+        // Initialize the database
+        insertedBooking = bookingRepository.saveAndFlush(booking);
+
+        // Get all the bookingList where quantity is greater than or equal to
+        defaultBookingFiltering("quantity.greaterThanOrEqual=" + DEFAULT_QUANTITY, "quantity.greaterThanOrEqual=" + UPDATED_QUANTITY);
+    }
+
+    @Test
+    @Transactional
+    void getAllBookingsByQuantityIsLessThanOrEqualToSomething() throws Exception {
+        // Initialize the database
+        insertedBooking = bookingRepository.saveAndFlush(booking);
+
+        // Get all the bookingList where quantity is less than or equal to
+        defaultBookingFiltering("quantity.lessThanOrEqual=" + DEFAULT_QUANTITY, "quantity.lessThanOrEqual=" + SMALLER_QUANTITY);
+    }
+
+    @Test
+    @Transactional
+    void getAllBookingsByQuantityIsLessThanSomething() throws Exception {
+        // Initialize the database
+        insertedBooking = bookingRepository.saveAndFlush(booking);
+
+        // Get all the bookingList where quantity is less than
+        defaultBookingFiltering("quantity.lessThan=" + UPDATED_QUANTITY, "quantity.lessThan=" + DEFAULT_QUANTITY);
+    }
+
+    @Test
+    @Transactional
+    void getAllBookingsByQuantityIsGreaterThanSomething() throws Exception {
+        // Initialize the database
+        insertedBooking = bookingRepository.saveAndFlush(booking);
+
+        // Get all the bookingList where quantity is greater than
+        defaultBookingFiltering("quantity.greaterThan=" + SMALLER_QUANTITY, "quantity.greaterThan=" + DEFAULT_QUANTITY);
     }
 
     @Test
@@ -592,173 +603,65 @@ class BookingResourceIT {
 
     @Test
     @Transactional
-    void getAllBookingsByContactPhoneIsEqualToSomething() throws Exception {
+    void getAllBookingsByCreatedTimeIsEqualToSomething() throws Exception {
         // Initialize the database
         insertedBooking = bookingRepository.saveAndFlush(booking);
 
-        // Get all the bookingList where contactPhone equals to
-        defaultBookingFiltering("contactPhone.equals=" + DEFAULT_CONTACT_PHONE, "contactPhone.equals=" + UPDATED_CONTACT_PHONE);
+        // Get all the bookingList where createdTime equals to
+        defaultBookingFiltering("createdTime.equals=" + DEFAULT_CREATED_TIME, "createdTime.equals=" + UPDATED_CREATED_TIME);
     }
 
     @Test
     @Transactional
-    void getAllBookingsByContactPhoneIsInShouldWork() throws Exception {
+    void getAllBookingsByCreatedTimeIsInShouldWork() throws Exception {
         // Initialize the database
         insertedBooking = bookingRepository.saveAndFlush(booking);
 
-        // Get all the bookingList where contactPhone in
+        // Get all the bookingList where createdTime in
         defaultBookingFiltering(
-            "contactPhone.in=" + DEFAULT_CONTACT_PHONE + "," + UPDATED_CONTACT_PHONE,
-            "contactPhone.in=" + UPDATED_CONTACT_PHONE
+            "createdTime.in=" + DEFAULT_CREATED_TIME + "," + UPDATED_CREATED_TIME,
+            "createdTime.in=" + UPDATED_CREATED_TIME
         );
     }
 
     @Test
     @Transactional
-    void getAllBookingsByContactPhoneIsNullOrNotNull() throws Exception {
+    void getAllBookingsByCreatedTimeIsNullOrNotNull() throws Exception {
         // Initialize the database
         insertedBooking = bookingRepository.saveAndFlush(booking);
 
-        // Get all the bookingList where contactPhone is not null
-        defaultBookingFiltering("contactPhone.specified=true", "contactPhone.specified=false");
+        // Get all the bookingList where createdTime is not null
+        defaultBookingFiltering("createdTime.specified=true", "createdTime.specified=false");
     }
 
     @Test
     @Transactional
-    void getAllBookingsByContactPhoneContainsSomething() throws Exception {
+    void getAllBookingsByCustomerIdIsEqualToSomething() throws Exception {
         // Initialize the database
         insertedBooking = bookingRepository.saveAndFlush(booking);
 
-        // Get all the bookingList where contactPhone contains
-        defaultBookingFiltering("contactPhone.contains=" + DEFAULT_CONTACT_PHONE, "contactPhone.contains=" + UPDATED_CONTACT_PHONE);
+        // Get all the bookingList where customerId equals to
+        defaultBookingFiltering("customerId.equals=" + DEFAULT_CUSTOMER_ID, "customerId.equals=" + UPDATED_CUSTOMER_ID);
     }
 
     @Test
     @Transactional
-    void getAllBookingsByContactPhoneNotContainsSomething() throws Exception {
+    void getAllBookingsByCustomerIdIsInShouldWork() throws Exception {
         // Initialize the database
         insertedBooking = bookingRepository.saveAndFlush(booking);
 
-        // Get all the bookingList where contactPhone does not contain
-        defaultBookingFiltering(
-            "contactPhone.doesNotContain=" + UPDATED_CONTACT_PHONE,
-            "contactPhone.doesNotContain=" + DEFAULT_CONTACT_PHONE
-        );
+        // Get all the bookingList where customerId in
+        defaultBookingFiltering("customerId.in=" + DEFAULT_CUSTOMER_ID + "," + UPDATED_CUSTOMER_ID, "customerId.in=" + UPDATED_CUSTOMER_ID);
     }
 
     @Test
     @Transactional
-    void getAllBookingsByContactEmailIsEqualToSomething() throws Exception {
+    void getAllBookingsByCustomerIdIsNullOrNotNull() throws Exception {
         // Initialize the database
         insertedBooking = bookingRepository.saveAndFlush(booking);
 
-        // Get all the bookingList where contactEmail equals to
-        defaultBookingFiltering("contactEmail.equals=" + DEFAULT_CONTACT_EMAIL, "contactEmail.equals=" + UPDATED_CONTACT_EMAIL);
-    }
-
-    @Test
-    @Transactional
-    void getAllBookingsByContactEmailIsInShouldWork() throws Exception {
-        // Initialize the database
-        insertedBooking = bookingRepository.saveAndFlush(booking);
-
-        // Get all the bookingList where contactEmail in
-        defaultBookingFiltering(
-            "contactEmail.in=" + DEFAULT_CONTACT_EMAIL + "," + UPDATED_CONTACT_EMAIL,
-            "contactEmail.in=" + UPDATED_CONTACT_EMAIL
-        );
-    }
-
-    @Test
-    @Transactional
-    void getAllBookingsByContactEmailIsNullOrNotNull() throws Exception {
-        // Initialize the database
-        insertedBooking = bookingRepository.saveAndFlush(booking);
-
-        // Get all the bookingList where contactEmail is not null
-        defaultBookingFiltering("contactEmail.specified=true", "contactEmail.specified=false");
-    }
-
-    @Test
-    @Transactional
-    void getAllBookingsByContactEmailContainsSomething() throws Exception {
-        // Initialize the database
-        insertedBooking = bookingRepository.saveAndFlush(booking);
-
-        // Get all the bookingList where contactEmail contains
-        defaultBookingFiltering("contactEmail.contains=" + DEFAULT_CONTACT_EMAIL, "contactEmail.contains=" + UPDATED_CONTACT_EMAIL);
-    }
-
-    @Test
-    @Transactional
-    void getAllBookingsByContactEmailNotContainsSomething() throws Exception {
-        // Initialize the database
-        insertedBooking = bookingRepository.saveAndFlush(booking);
-
-        // Get all the bookingList where contactEmail does not contain
-        defaultBookingFiltering(
-            "contactEmail.doesNotContain=" + UPDATED_CONTACT_EMAIL,
-            "contactEmail.doesNotContain=" + DEFAULT_CONTACT_EMAIL
-        );
-    }
-
-    @Test
-    @Transactional
-    void getAllBookingsBySpecialRequestsIsEqualToSomething() throws Exception {
-        // Initialize the database
-        insertedBooking = bookingRepository.saveAndFlush(booking);
-
-        // Get all the bookingList where specialRequests equals to
-        defaultBookingFiltering("specialRequests.equals=" + DEFAULT_SPECIAL_REQUESTS, "specialRequests.equals=" + UPDATED_SPECIAL_REQUESTS);
-    }
-
-    @Test
-    @Transactional
-    void getAllBookingsBySpecialRequestsIsInShouldWork() throws Exception {
-        // Initialize the database
-        insertedBooking = bookingRepository.saveAndFlush(booking);
-
-        // Get all the bookingList where specialRequests in
-        defaultBookingFiltering(
-            "specialRequests.in=" + DEFAULT_SPECIAL_REQUESTS + "," + UPDATED_SPECIAL_REQUESTS,
-            "specialRequests.in=" + UPDATED_SPECIAL_REQUESTS
-        );
-    }
-
-    @Test
-    @Transactional
-    void getAllBookingsBySpecialRequestsIsNullOrNotNull() throws Exception {
-        // Initialize the database
-        insertedBooking = bookingRepository.saveAndFlush(booking);
-
-        // Get all the bookingList where specialRequests is not null
-        defaultBookingFiltering("specialRequests.specified=true", "specialRequests.specified=false");
-    }
-
-    @Test
-    @Transactional
-    void getAllBookingsBySpecialRequestsContainsSomething() throws Exception {
-        // Initialize the database
-        insertedBooking = bookingRepository.saveAndFlush(booking);
-
-        // Get all the bookingList where specialRequests contains
-        defaultBookingFiltering(
-            "specialRequests.contains=" + DEFAULT_SPECIAL_REQUESTS,
-            "specialRequests.contains=" + UPDATED_SPECIAL_REQUESTS
-        );
-    }
-
-    @Test
-    @Transactional
-    void getAllBookingsBySpecialRequestsNotContainsSomething() throws Exception {
-        // Initialize the database
-        insertedBooking = bookingRepository.saveAndFlush(booking);
-
-        // Get all the bookingList where specialRequests does not contain
-        defaultBookingFiltering(
-            "specialRequests.doesNotContain=" + UPDATED_SPECIAL_REQUESTS,
-            "specialRequests.doesNotContain=" + DEFAULT_SPECIAL_REQUESTS
-        );
+        // Get all the bookingList where customerId is not null
+        defaultBookingFiltering("customerId.specified=true", "customerId.specified=false");
     }
 
     @Test
@@ -793,32 +696,166 @@ class BookingResourceIT {
 
     @Test
     @Transactional
-    void getAllBookingsByExpiresAtIsEqualToSomething() throws Exception {
+    void getAllBookingsByUpdatedAtIsEqualToSomething() throws Exception {
         // Initialize the database
         insertedBooking = bookingRepository.saveAndFlush(booking);
 
-        // Get all the bookingList where expiresAt equals to
-        defaultBookingFiltering("expiresAt.equals=" + DEFAULT_EXPIRES_AT, "expiresAt.equals=" + UPDATED_EXPIRES_AT);
+        // Get all the bookingList where updatedAt equals to
+        defaultBookingFiltering("updatedAt.equals=" + DEFAULT_UPDATED_AT, "updatedAt.equals=" + UPDATED_UPDATED_AT);
     }
 
     @Test
     @Transactional
-    void getAllBookingsByExpiresAtIsInShouldWork() throws Exception {
+    void getAllBookingsByUpdatedAtIsInShouldWork() throws Exception {
         // Initialize the database
         insertedBooking = bookingRepository.saveAndFlush(booking);
 
-        // Get all the bookingList where expiresAt in
-        defaultBookingFiltering("expiresAt.in=" + DEFAULT_EXPIRES_AT + "," + UPDATED_EXPIRES_AT, "expiresAt.in=" + UPDATED_EXPIRES_AT);
+        // Get all the bookingList where updatedAt in
+        defaultBookingFiltering("updatedAt.in=" + DEFAULT_UPDATED_AT + "," + UPDATED_UPDATED_AT, "updatedAt.in=" + UPDATED_UPDATED_AT);
     }
 
     @Test
     @Transactional
-    void getAllBookingsByExpiresAtIsNullOrNotNull() throws Exception {
+    void getAllBookingsByUpdatedAtIsNullOrNotNull() throws Exception {
         // Initialize the database
         insertedBooking = bookingRepository.saveAndFlush(booking);
 
-        // Get all the bookingList where expiresAt is not null
-        defaultBookingFiltering("expiresAt.specified=true", "expiresAt.specified=false");
+        // Get all the bookingList where updatedAt is not null
+        defaultBookingFiltering("updatedAt.specified=true", "updatedAt.specified=false");
+    }
+
+    @Test
+    @Transactional
+    void getAllBookingsByIsDeletedIsEqualToSomething() throws Exception {
+        // Initialize the database
+        insertedBooking = bookingRepository.saveAndFlush(booking);
+
+        // Get all the bookingList where isDeleted equals to
+        defaultBookingFiltering("isDeleted.equals=" + DEFAULT_IS_DELETED, "isDeleted.equals=" + UPDATED_IS_DELETED);
+    }
+
+    @Test
+    @Transactional
+    void getAllBookingsByIsDeletedIsInShouldWork() throws Exception {
+        // Initialize the database
+        insertedBooking = bookingRepository.saveAndFlush(booking);
+
+        // Get all the bookingList where isDeleted in
+        defaultBookingFiltering("isDeleted.in=" + DEFAULT_IS_DELETED + "," + UPDATED_IS_DELETED, "isDeleted.in=" + UPDATED_IS_DELETED);
+    }
+
+    @Test
+    @Transactional
+    void getAllBookingsByIsDeletedIsNullOrNotNull() throws Exception {
+        // Initialize the database
+        insertedBooking = bookingRepository.saveAndFlush(booking);
+
+        // Get all the bookingList where isDeleted is not null
+        defaultBookingFiltering("isDeleted.specified=true", "isDeleted.specified=false");
+    }
+
+    @Test
+    @Transactional
+    void getAllBookingsByDeletedAtIsEqualToSomething() throws Exception {
+        // Initialize the database
+        insertedBooking = bookingRepository.saveAndFlush(booking);
+
+        // Get all the bookingList where deletedAt equals to
+        defaultBookingFiltering("deletedAt.equals=" + DEFAULT_DELETED_AT, "deletedAt.equals=" + UPDATED_DELETED_AT);
+    }
+
+    @Test
+    @Transactional
+    void getAllBookingsByDeletedAtIsInShouldWork() throws Exception {
+        // Initialize the database
+        insertedBooking = bookingRepository.saveAndFlush(booking);
+
+        // Get all the bookingList where deletedAt in
+        defaultBookingFiltering("deletedAt.in=" + DEFAULT_DELETED_AT + "," + UPDATED_DELETED_AT, "deletedAt.in=" + UPDATED_DELETED_AT);
+    }
+
+    @Test
+    @Transactional
+    void getAllBookingsByDeletedAtIsNullOrNotNull() throws Exception {
+        // Initialize the database
+        insertedBooking = bookingRepository.saveAndFlush(booking);
+
+        // Get all the bookingList where deletedAt is not null
+        defaultBookingFiltering("deletedAt.specified=true", "deletedAt.specified=false");
+    }
+
+    @Test
+    @Transactional
+    void getAllBookingsByDeletedByIsEqualToSomething() throws Exception {
+        // Initialize the database
+        insertedBooking = bookingRepository.saveAndFlush(booking);
+
+        // Get all the bookingList where deletedBy equals to
+        defaultBookingFiltering("deletedBy.equals=" + DEFAULT_DELETED_BY, "deletedBy.equals=" + UPDATED_DELETED_BY);
+    }
+
+    @Test
+    @Transactional
+    void getAllBookingsByDeletedByIsInShouldWork() throws Exception {
+        // Initialize the database
+        insertedBooking = bookingRepository.saveAndFlush(booking);
+
+        // Get all the bookingList where deletedBy in
+        defaultBookingFiltering("deletedBy.in=" + DEFAULT_DELETED_BY + "," + UPDATED_DELETED_BY, "deletedBy.in=" + UPDATED_DELETED_BY);
+    }
+
+    @Test
+    @Transactional
+    void getAllBookingsByDeletedByIsNullOrNotNull() throws Exception {
+        // Initialize the database
+        insertedBooking = bookingRepository.saveAndFlush(booking);
+
+        // Get all the bookingList where deletedBy is not null
+        defaultBookingFiltering("deletedBy.specified=true", "deletedBy.specified=false");
+    }
+
+    @Test
+    @Transactional
+    void getAllBookingsByInvoiceIsEqualToSomething() throws Exception {
+        Invoice invoice;
+        if (TestUtil.findAll(em, Invoice.class).isEmpty()) {
+            bookingRepository.saveAndFlush(booking);
+            invoice = InvoiceResourceIT.createEntity(em);
+        } else {
+            invoice = TestUtil.findAll(em, Invoice.class).get(0);
+        }
+        em.persist(invoice);
+        em.flush();
+        booking.setInvoice(invoice);
+        bookingRepository.saveAndFlush(booking);
+        Long invoiceId = invoice.getId();
+        // Get all the bookingList where invoice equals to invoiceId
+        defaultBookingShouldBeFound("invoiceId.equals=" + invoiceId);
+
+        // Get all the bookingList where invoice equals to (invoiceId + 1)
+        defaultBookingShouldNotBeFound("invoiceId.equals=" + (invoiceId + 1));
+    }
+
+    @Test
+    @Transactional
+    void getAllBookingsByPaymentTransactionIsEqualToSomething() throws Exception {
+        PaymentTransaction paymentTransaction;
+        if (TestUtil.findAll(em, PaymentTransaction.class).isEmpty()) {
+            bookingRepository.saveAndFlush(booking);
+            paymentTransaction = PaymentTransactionResourceIT.createEntity();
+        } else {
+            paymentTransaction = TestUtil.findAll(em, PaymentTransaction.class).get(0);
+        }
+        em.persist(paymentTransaction);
+        em.flush();
+        booking.setPaymentTransaction(paymentTransaction);
+        bookingRepository.saveAndFlush(booking);
+        Long paymentTransactionId = paymentTransaction.getId();
+        // Get all the bookingList where paymentTransaction equals to paymentTransactionId
+        defaultBookingShouldBeFound("paymentTransactionId.equals=" + paymentTransactionId);
+
+        // Get all the bookingList where paymentTransaction equals to (paymentTransactionId + 1)
+        defaultBookingShouldNotBeFound("paymentTransactionId.equals=" + (paymentTransactionId + 1));
     }
 
     private void defaultBookingFiltering(String shouldBeFound, String shouldNotBeFound) throws Exception {
@@ -835,16 +872,17 @@ class BookingResourceIT {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(booking.getId().intValue())))
-            .andExpect(jsonPath("$.[*].userId").value(hasItem(DEFAULT_USER_ID.toString())))
-            .andExpect(jsonPath("$.[*].tripId").value(hasItem(DEFAULT_TRIP_ID.toString())))
-            .andExpect(jsonPath("$.[*].bookingReference").value(hasItem(DEFAULT_BOOKING_REFERENCE)))
+            .andExpect(jsonPath("$.[*].bookingCode").value(hasItem(DEFAULT_BOOKING_CODE)))
             .andExpect(jsonPath("$.[*].status").value(hasItem(DEFAULT_STATUS.toString())))
+            .andExpect(jsonPath("$.[*].quantity").value(hasItem(DEFAULT_QUANTITY)))
             .andExpect(jsonPath("$.[*].totalAmount").value(hasItem(sameNumber(DEFAULT_TOTAL_AMOUNT))))
-            .andExpect(jsonPath("$.[*].contactPhone").value(hasItem(DEFAULT_CONTACT_PHONE)))
-            .andExpect(jsonPath("$.[*].contactEmail").value(hasItem(DEFAULT_CONTACT_EMAIL)))
-            .andExpect(jsonPath("$.[*].specialRequests").value(hasItem(DEFAULT_SPECIAL_REQUESTS)))
+            .andExpect(jsonPath("$.[*].createdTime").value(hasItem(DEFAULT_CREATED_TIME.toString())))
+            .andExpect(jsonPath("$.[*].customerId").value(hasItem(DEFAULT_CUSTOMER_ID.toString())))
             .andExpect(jsonPath("$.[*].createdAt").value(hasItem(DEFAULT_CREATED_AT.toString())))
-            .andExpect(jsonPath("$.[*].expiresAt").value(hasItem(DEFAULT_EXPIRES_AT.toString())));
+            .andExpect(jsonPath("$.[*].updatedAt").value(hasItem(DEFAULT_UPDATED_AT.toString())))
+            .andExpect(jsonPath("$.[*].isDeleted").value(hasItem(DEFAULT_IS_DELETED)))
+            .andExpect(jsonPath("$.[*].deletedAt").value(hasItem(DEFAULT_DELETED_AT.toString())))
+            .andExpect(jsonPath("$.[*].deletedBy").value(hasItem(DEFAULT_DELETED_BY.toString())));
 
         // Check, that the count call also returns 1
         restBookingMockMvc
@@ -893,16 +931,17 @@ class BookingResourceIT {
         // Disconnect from session so that the updates on updatedBooking are not directly saved in db
         em.detach(updatedBooking);
         updatedBooking
-            .userId(UPDATED_USER_ID)
-            .tripId(UPDATED_TRIP_ID)
-            .bookingReference(UPDATED_BOOKING_REFERENCE)
+            .bookingCode(UPDATED_BOOKING_CODE)
             .status(UPDATED_STATUS)
+            .quantity(UPDATED_QUANTITY)
             .totalAmount(UPDATED_TOTAL_AMOUNT)
-            .contactPhone(UPDATED_CONTACT_PHONE)
-            .contactEmail(UPDATED_CONTACT_EMAIL)
-            .specialRequests(UPDATED_SPECIAL_REQUESTS)
+            .createdTime(UPDATED_CREATED_TIME)
+            .customerId(UPDATED_CUSTOMER_ID)
             .createdAt(UPDATED_CREATED_AT)
-            .expiresAt(UPDATED_EXPIRES_AT);
+            .updatedAt(UPDATED_UPDATED_AT)
+            .isDeleted(UPDATED_IS_DELETED)
+            .deletedAt(UPDATED_DELETED_AT)
+            .deletedBy(UPDATED_DELETED_BY);
         BookingDTO bookingDTO = bookingMapper.toDto(updatedBooking);
 
         restBookingMockMvc
@@ -996,10 +1035,10 @@ class BookingResourceIT {
         partialUpdatedBooking.setId(booking.getId());
 
         partialUpdatedBooking
-            .status(UPDATED_STATUS)
-            .contactPhone(UPDATED_CONTACT_PHONE)
-            .contactEmail(UPDATED_CONTACT_EMAIL)
-            .specialRequests(UPDATED_SPECIAL_REQUESTS);
+            .totalAmount(UPDATED_TOTAL_AMOUNT)
+            .customerId(UPDATED_CUSTOMER_ID)
+            .createdAt(UPDATED_CREATED_AT)
+            .updatedAt(UPDATED_UPDATED_AT);
 
         restBookingMockMvc
             .perform(
@@ -1029,16 +1068,17 @@ class BookingResourceIT {
         partialUpdatedBooking.setId(booking.getId());
 
         partialUpdatedBooking
-            .userId(UPDATED_USER_ID)
-            .tripId(UPDATED_TRIP_ID)
-            .bookingReference(UPDATED_BOOKING_REFERENCE)
+            .bookingCode(UPDATED_BOOKING_CODE)
             .status(UPDATED_STATUS)
+            .quantity(UPDATED_QUANTITY)
             .totalAmount(UPDATED_TOTAL_AMOUNT)
-            .contactPhone(UPDATED_CONTACT_PHONE)
-            .contactEmail(UPDATED_CONTACT_EMAIL)
-            .specialRequests(UPDATED_SPECIAL_REQUESTS)
+            .createdTime(UPDATED_CREATED_TIME)
+            .customerId(UPDATED_CUSTOMER_ID)
             .createdAt(UPDATED_CREATED_AT)
-            .expiresAt(UPDATED_EXPIRES_AT);
+            .updatedAt(UPDATED_UPDATED_AT)
+            .isDeleted(UPDATED_IS_DELETED)
+            .deletedAt(UPDATED_DELETED_AT)
+            .deletedBy(UPDATED_DELETED_BY);
 
         restBookingMockMvc
             .perform(

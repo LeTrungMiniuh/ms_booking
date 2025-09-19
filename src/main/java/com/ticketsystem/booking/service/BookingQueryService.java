@@ -74,18 +74,25 @@ public class BookingQueryService extends QueryService<Booking> {
             specification = Specification.allOf(
                 Boolean.TRUE.equals(criteria.getDistinct()) ? distinct(criteria.getDistinct()) : null,
                 buildRangeSpecification(criteria.getId(), Booking_.id),
-                buildSpecification(criteria.getUserId(), Booking_.userId),
-                buildSpecification(criteria.getTripId(), Booking_.tripId),
-                buildStringSpecification(criteria.getBookingReference(), Booking_.bookingReference),
+                buildStringSpecification(criteria.getBookingCode(), Booking_.bookingCode),
                 buildSpecification(criteria.getStatus(), Booking_.status),
+                buildRangeSpecification(criteria.getQuantity(), Booking_.quantity),
                 buildRangeSpecification(criteria.getTotalAmount(), Booking_.totalAmount),
-                buildStringSpecification(criteria.getContactPhone(), Booking_.contactPhone),
-                buildStringSpecification(criteria.getContactEmail(), Booking_.contactEmail),
-                buildStringSpecification(criteria.getSpecialRequests(), Booking_.specialRequests),
+                buildRangeSpecification(criteria.getCreatedTime(), Booking_.createdTime),
+                buildSpecification(criteria.getCustomerId(), Booking_.customerId),
                 buildRangeSpecification(criteria.getCreatedAt(), Booking_.createdAt),
-                buildRangeSpecification(criteria.getExpiresAt(), Booking_.expiresAt),
-                buildSpecification(criteria.getPassengersId(), root -> root.join(Booking_.passengers, JoinType.LEFT).get(Passenger_.id)),
-                buildSpecification(criteria.getHistoriesId(), root -> root.join(Booking_.histories, JoinType.LEFT).get(BookingHistory_.id))
+                buildRangeSpecification(criteria.getUpdatedAt(), Booking_.updatedAt),
+                buildSpecification(criteria.getIsDeleted(), Booking_.isDeleted),
+                buildRangeSpecification(criteria.getDeletedAt(), Booking_.deletedAt),
+                buildSpecification(criteria.getDeletedBy(), Booking_.deletedBy),
+                buildSpecification(criteria.getInvoiceId(), root -> root.join(Booking_.invoice, JoinType.LEFT).get(Invoice_.id)),
+                buildSpecification(criteria.getPaymentTransactionId(), root ->
+                    root.join(Booking_.paymentTransaction, JoinType.LEFT).get(PaymentTransaction_.id)
+                ),
+                buildSpecification(criteria.getTicketsId(), root -> root.join(Booking_.tickets, JoinType.LEFT).get(Ticket_.id)),
+                buildSpecification(criteria.getAppliedPromosId(), root ->
+                    root.join(Booking_.appliedPromos, JoinType.LEFT).get(AppliedPromotion_.id)
+                )
             );
         }
         return specification;

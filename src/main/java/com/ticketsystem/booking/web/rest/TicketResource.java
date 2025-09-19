@@ -13,18 +13,12 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import tech.jhipster.web.util.HeaderUtil;
-import tech.jhipster.web.util.PaginationUtil;
 import tech.jhipster.web.util.ResponseUtil;
 
 /**
@@ -84,7 +78,7 @@ public class TicketResource {
      */
     @PutMapping("/{id}")
     public ResponseEntity<TicketDTO> updateTicket(
-        @PathVariable(value = "id", required = false) final UUID id,
+        @PathVariable(value = "id", required = false) final Long id,
         @Valid @RequestBody TicketDTO ticketDTO
     ) throws URISyntaxException {
         LOG.debug("REST request to update Ticket : {}, {}", id, ticketDTO);
@@ -118,7 +112,7 @@ public class TicketResource {
      */
     @PatchMapping(value = "/{id}", consumes = { "application/json", "application/merge-patch+json" })
     public ResponseEntity<TicketDTO> partialUpdateTicket(
-        @PathVariable(value = "id", required = false) final UUID id,
+        @PathVariable(value = "id", required = false) final Long id,
         @NotNull @RequestBody TicketDTO ticketDTO
     ) throws URISyntaxException {
         LOG.debug("REST request to partial update Ticket partially : {}, {}", id, ticketDTO);
@@ -144,20 +138,15 @@ public class TicketResource {
     /**
      * {@code GET  /tickets} : get all the tickets.
      *
-     * @param pageable the pagination information.
      * @param criteria the criteria which the requested entities should match.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of tickets in body.
      */
     @GetMapping("")
-    public ResponseEntity<List<TicketDTO>> getAllTickets(
-        TicketCriteria criteria,
-        @org.springdoc.core.annotations.ParameterObject Pageable pageable
-    ) {
+    public ResponseEntity<List<TicketDTO>> getAllTickets(TicketCriteria criteria) {
         LOG.debug("REST request to get Tickets by criteria: {}", criteria);
 
-        Page<TicketDTO> page = ticketQueryService.findByCriteria(criteria, pageable);
-        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
-        return ResponseEntity.ok().headers(headers).body(page.getContent());
+        List<TicketDTO> entityList = ticketQueryService.findByCriteria(criteria);
+        return ResponseEntity.ok().body(entityList);
     }
 
     /**
@@ -179,7 +168,7 @@ public class TicketResource {
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and with body the ticketDTO, or with status {@code 404 (Not Found)}.
      */
     @GetMapping("/{id}")
-    public ResponseEntity<TicketDTO> getTicket(@PathVariable("id") UUID id) {
+    public ResponseEntity<TicketDTO> getTicket(@PathVariable("id") Long id) {
         LOG.debug("REST request to get Ticket : {}", id);
         Optional<TicketDTO> ticketDTO = ticketService.findOne(id);
         return ResponseUtil.wrapOrNotFound(ticketDTO);
@@ -192,7 +181,7 @@ public class TicketResource {
      * @return the {@link ResponseEntity} with status {@code 204 (NO_CONTENT)}.
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteTicket(@PathVariable("id") UUID id) {
+    public ResponseEntity<Void> deleteTicket(@PathVariable("id") Long id) {
         LOG.debug("REST request to delete Ticket : {}", id);
         ticketService.delete(id);
         return ResponseEntity.noContent()

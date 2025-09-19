@@ -5,10 +5,9 @@ package com.ticketsystem.booking.domain.enumeration;
  */
 public enum BookingStatus {
     DRAFT,
-    PENDING_PAYMENT,
+    AWAITING_PAYMENT,
+    PAID,
     CONFIRMED,
-    CHECKED_IN,
-    COMPLETED,
-    CANCELLED,
+    CANCELED,
     REFUNDED,
 }

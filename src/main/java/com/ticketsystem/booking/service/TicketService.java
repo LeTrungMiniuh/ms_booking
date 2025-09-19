@@ -2,7 +2,6 @@ package com.ticketsystem.booking.service;
 
 import com.ticketsystem.booking.service.dto.TicketDTO;
 import java.util.Optional;
-import java.util.UUID;
 
 /**
  * Service Interface for managing {@link com.ticketsystem.booking.domain.Ticket}.
@@ -38,12 +37,12 @@ public interface TicketService {
      * @param id the id of the entity.
      * @return the entity.
      */
-    Optional<TicketDTO> findOne(UUID id);
+    Optional<TicketDTO> findOne(Long id);
 
     /**
      * Delete the "id" ticket.
      *
      * @param id the id of the entity.
      */
-    void delete(UUID id);
+    void delete(Long id);
 }

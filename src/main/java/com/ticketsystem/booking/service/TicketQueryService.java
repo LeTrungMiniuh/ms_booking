@@ -6,10 +6,10 @@ import com.ticketsystem.booking.repository.TicketRepository;
 import com.ticketsystem.booking.service.criteria.TicketCriteria;
 import com.ticketsystem.booking.service.dto.TicketDTO;
 import com.ticketsystem.booking.service.mapper.TicketMapper;
+import jakarta.persistence.criteria.JoinType;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,7 +19,7 @@ import tech.jhipster.service.QueryService;
  * Service for executing complex queries for {@link Ticket} entities in the database.
  * The main input is a {@link TicketCriteria} which gets converted to {@link Specification},
  * in a way that all the filters must apply.
- * It returns a {@link Page} of {@link TicketDTO} which fulfills the criteria.
+ * It returns a {@link List} of {@link TicketDTO} which fulfills the criteria.
  */
 @Service
 @Transactional(readOnly = true)
@@ -37,16 +37,15 @@ public class TicketQueryService extends QueryService<Ticket> {
     }
 
     /**
-     * Return a {@link Page} of {@link TicketDTO} which matches the criteria from the database.
+     * Return a {@link List} of {@link TicketDTO} which matches the criteria from the database.
      * @param criteria The object which holds all the filters, which the entities should match.
-     * @param page The page, which should be returned.
      * @return the matching entities.
      */
     @Transactional(readOnly = true)
-    public Page<TicketDTO> findByCriteria(TicketCriteria criteria, Pageable page) {
-        LOG.debug("find by criteria : {}, page: {}", criteria, page);
+    public List<TicketDTO> findByCriteria(TicketCriteria criteria) {
+        LOG.debug("find by criteria : {}", criteria);
         final Specification<Ticket> specification = createSpecification(criteria);
-        return ticketRepository.findAll(specification, page).map(ticketMapper::toDto);
+        return ticketMapper.toDto(ticketRepository.findAll(specification));
     }
 
     /**
@@ -72,15 +71,22 @@ public class TicketQueryService extends QueryService<Ticket> {
             // This has to be called first, because the distinct method returns null
             specification = Specification.allOf(
                 Boolean.TRUE.equals(criteria.getDistinct()) ? distinct(criteria.getDistinct()) : null,
-                buildSpecification(criteria.getId(), Ticket_.id),
-                buildSpecification(criteria.getScheduleId(), Ticket_.scheduleId),
-                buildStringSpecification(criteria.getSeatNumber(), Ticket_.seatNumber),
-                buildSpecification(criteria.getSeatType(), Ticket_.seatType),
+                buildRangeSpecification(criteria.getId(), Ticket_.id),
+                buildStringSpecification(criteria.getTicketCode(), Ticket_.ticketCode),
                 buildRangeSpecification(criteria.getPrice(), Ticket_.price),
-                buildSpecification(criteria.getStatus(), Ticket_.status),
-                buildRangeSpecification(criteria.getReservedUntil(), Ticket_.reservedUntil),
+                buildStringSpecification(criteria.getQrCode(), Ticket_.qrCode),
+                buildRangeSpecification(criteria.getTimeFrom(), Ticket_.timeFrom),
+                buildRangeSpecification(criteria.getTimeTo(), Ticket_.timeTo),
+                buildSpecification(criteria.getCheckedIn(), Ticket_.checkedIn),
+                buildSpecification(criteria.getTripId(), Ticket_.tripId),
+                buildSpecification(criteria.getRouteId(), Ticket_.routeId),
+                buildSpecification(criteria.getTripSeatId(), Ticket_.tripSeatId),
                 buildRangeSpecification(criteria.getCreatedAt(), Ticket_.createdAt),
-                buildRangeSpecification(criteria.getUpdatedAt(), Ticket_.updatedAt)
+                buildRangeSpecification(criteria.getUpdatedAt(), Ticket_.updatedAt),
+                buildSpecification(criteria.getIsDeleted(), Ticket_.isDeleted),
+                buildRangeSpecification(criteria.getDeletedAt(), Ticket_.deletedAt),
+                buildSpecification(criteria.getDeletedBy(), Ticket_.deletedBy),
+                buildSpecification(criteria.getBookingId(), root -> root.join(Ticket_.booking, JoinType.LEFT).get(Booking_.id))
             );
         }
         return specification;

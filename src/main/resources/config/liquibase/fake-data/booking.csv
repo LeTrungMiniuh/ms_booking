@@ -1,11 +1,11 @@
-id;user_id;trip_id;booking_reference;status;total_amount;contact_phone;contact_email;special_requests;created_at;expires_at
-1;d57255a6-aff8-4550-b866-2e612a04c11e;6eeffb6c-e683-4b05-aa14-60e3e949a3b7;than except astride;REFUNDED;27122.35;where;ouch;stable sauerkraut;2025-09-14T11:56:21;2025-09-13T21:41:17
-2;03063d63-b408-4994-82a0-02f2d0c2209f;e485aadd-f608-4283-bb2c-0c85ed34ab1c;cap;CONFIRMED;22459.53;gnash homeschool;how;what commandeer hourly;2025-09-14T02:07:45;2025-09-13T17:31:10
-3;b59917c9-c6d3-474c-a004-7244089d67cb;dd0007b6-4759-444c-abd5-cc763283ac93;with;CHECKED_IN;21980.05;round smuggle despite;daughter steep gnaw;lonely among plus;2025-09-14T05:52:59;2025-09-14T10:54:12
-4;5ca45a29-03c7-4da1-a88e-649a0c5e3184;a94efc76-59b0-4d01-afc0-0e163e5cf6fd;mmm ew;CONFIRMED;20182.38;interchange unscramble apud;readjust fooey;until apropos finally;2025-09-14T02:23:10;2025-09-13T20:32:01
-5;de48fc8c-373b-4d27-8b0b-33d8c47165c8;0def7209-ec63-4860-b0ae-c357312eec30;boiling nautical doubtfully;CHECKED_IN;27712.39;safe solemnly;sprinkles supposing;anaesthetise term where;2025-09-14T03:54:55;2025-09-13T18:43:58
-6;d6d68a4b-c429-4a03-ba35-d6c771eaec88;ee054b01-f3e6-4805-b78d-383c4cda66cf;cautiously;PENDING_PAYMENT;11654.24;cop navigate within;netsuke;pish only pendant;2025-09-14T05:47:18;2025-09-13T22:28:35
-7;7c48c4e1-bca6-4cb6-8468-02722a29526b;5764b4ac-a5d5-4027-8d15-76ba0afe135c;meanwhile;DRAFT;28334.21;while acceptable;which mooch apprehensive;mallard;2025-09-13T18:20:09;2025-09-14T01:48:39
-8;8c911574-9763-4e47-a32b-382f27da2e6f;0ef68bd3-f67f-48bc-b737-391dd6c69e1d;stable overburden hmph;CHECKED_IN;25165.5;playfully;given afore even;though;2025-09-14T06:11:07;2025-09-13T13:44:21
-9;e53156d4-5ef8-4d86-89cf-def8d749f185;bec4a512-cf8d-4beb-b2e6-f338e89b1f5d;gratefully gee;CHECKED_IN;8843.45;repeatedly;muffled;imagineer;2025-09-13T20:59:18;2025-09-14T06:04:11
-10;3eb63260-0547-4fdf-a920-4dda887a2b3e;9ba6d8a0-c5e4-492c-86c1-4153439c5614;gadzooks by;REFUNDED;26256.51;up what;designation per;wisely haversack which;2025-09-13T18:39:18;2025-09-13T19:03:14
+id;booking_code;status;quantity;total_amount;created_time;customer_id;created_at;updated_at;is_deleted;deleted_at;deleted_by
+1;humor awkwardly battle;DRAFT;20699;1855.66;2025-09-13T18:44:16;c11ef6ee-ffb6-4ce6-a83b-05a1460e3e94;2025-09-14T03:33:53;2025-09-13T18:01:33;false;2025-09-13T22:51:10;8feb10a7-9fc7-4492-866d-8c0e3fd2142d
+2;uh-huh ack;REFUNDED;1477;28237.53;2025-09-14T01:27:49;e32c5cf6-0306-43d6-b3b4-089942a002f2;2025-09-13T13:36:06;2025-09-14T06:33:36;true;2025-09-13T15:15:27;09f0e485-aadd-4f60-a828-3b2c0c85ed34
+3;actually opposite gnash;AWAITING_PAYMENT;25771;30094.51;2025-09-14T03:11:00;04602bd7-394b-4a32-bc93-b165fa824ca0;2025-09-13T21:18:28;2025-09-13T20:18:21;false;2025-09-13T16:59:06;b59917c9-c6d3-474c-a004-7244089d67cb
+4;aha safe guide;AWAITING_PAYMENT;4136;17953.67;2025-09-13T17:20:54;ac93a029-1502-4f8a-bb2a-17dec5b0770d;2025-09-13T19:28:52;2025-09-14T01:11:27;true;2025-09-13T14:43:55;06c15481-2385-4a96-b8cc-2d58e6d558b5
+5;among plus;CANCELED;30336;12058.02;2025-09-14T06:48:29;a45a2903-c7da-4188-ae64-9a0c5e31848a;2025-09-13T18:43:10;2025-09-14T09:14:43;false;2025-09-14T06:41:10;7659b0d0-1fc0-40e1-b63e-5cf6fd98ed96
+6;for;AWAITING_PAYMENT;11138;20182.38;2025-09-14T07:12:27;3749e079-1d84-4bf5-97a7-a7288c208eac;2025-09-13T13:38:28;2025-09-13T19:29:14;true;2025-09-13T18:41:27;3c23ec18-be24-4a98-b24f-2c58395de48f
+7;yowza triumphantly;CONFIRMED;25650;9185.9;2025-09-13T23:03:22;165c810d-ef72-409e-8c63-8600aec35731;2025-09-14T09:58:15;2025-09-14T09:39:58;false;2025-09-13T17:53:50;0fbdfc59-d13a-4d76-9c85-6d2c427d6097
+8;a wonderfully;PAID;20621;27589.39;2025-09-14T02:02:41;2cc849d1-8489-4d0d-b62e-5dec9d593ca4;2025-09-13T21:30:00;2025-09-14T08:28:41;true;2025-09-14T00:32:41;a4bc429a-03a3-45d6-9c77-1eaec88cee05
+9;obediently like imaginative;PAID;25638;31033.46;2025-09-14T10:55:27;2b5ef031-35c4-49d4-a942-3c79c2830aea;2025-09-14T11:39:20;2025-09-13T14:55:17;false;2025-09-14T08:46:09;a5b49efc-d7c5-4d96-b96a-e9414ef2ab67
+10;where;CANCELED;12972;25747.09;2025-09-14T05:47:19;64680272-2a29-4526-8b35-764b4aca5d50;2025-09-13T22:46:03;2025-09-14T09:01:10;true;2025-09-13T20:27:42;76ba0afe-135c-4322-bbbc-1c70d5ad3d2c
