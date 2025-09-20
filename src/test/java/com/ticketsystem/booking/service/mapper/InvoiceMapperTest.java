@@ -1,7 +1,7 @@
-package com.ticketsystem.booking.service.mapper;
+package com.ridehub.booking.service.mapper;
 
-import static com.ticketsystem.booking.domain.InvoiceAsserts.*;
-import static com.ticketsystem.booking.domain.InvoiceTestSamples.*;
+import static com.ridehub.booking.domain.InvoiceAsserts.*;
+import static com.ridehub.booking.domain.InvoiceTestSamples.*;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

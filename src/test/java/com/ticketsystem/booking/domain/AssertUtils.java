@@ -1,4 +1,4 @@
-package com.ticketsystem.booking.domain;
+package com.ridehub.booking.domain;
 
 import java.math.BigDecimal;
 import java.time.ZoneOffset;

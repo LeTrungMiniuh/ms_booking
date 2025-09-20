@@ -1,4 +1,4 @@
-package com.ticketsystem.booking.config;
+package com.ridehub.booking.config;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.*;

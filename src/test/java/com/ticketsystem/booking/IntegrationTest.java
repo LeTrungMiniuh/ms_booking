@@ -1,11 +1,11 @@
-package com.ticketsystem.booking;
+package com.ridehub.booking;
 
-import com.ticketsystem.booking.config.AsyncSyncConfiguration;
-import com.ticketsystem.booking.config.EmbeddedKafka;
-import com.ticketsystem.booking.config.EmbeddedRedis;
-import com.ticketsystem.booking.config.EmbeddedSQL;
-import com.ticketsystem.booking.config.JacksonConfiguration;
-import com.ticketsystem.booking.config.TestSecurityConfiguration;
+import com.ridehub.booking.config.AsyncSyncConfiguration;
+import com.ridehub.booking.config.EmbeddedKafka;
+import com.ridehub.booking.config.EmbeddedRedis;
+import com.ridehub.booking.config.EmbeddedSQL;
+import com.ridehub.booking.config.JacksonConfiguration;
+import com.ridehub.booking.config.TestSecurityConfiguration;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

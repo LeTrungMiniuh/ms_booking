@@ -1,8 +1,8 @@
-package com.ticketsystem.booking.service.dto;
+package com.ridehub.booking.service.dto;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.ticketsystem.booking.web.rest.TestUtil;
+import com.ridehub.booking.web.rest.TestUtil;
 import org.junit.jupiter.api.Test;
 
 class PaymentTransactionDTOTest {

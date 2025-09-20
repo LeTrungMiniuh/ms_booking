@@ -1,4 +1,4 @@
-package com.ticketsystem.booking.security.oauth2;
+package com.ridehub.booking.security.oauth2;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;

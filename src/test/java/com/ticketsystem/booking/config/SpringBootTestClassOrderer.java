@@ -1,6 +1,6 @@
-package com.ticketsystem.booking.config;
+package com.ridehub.booking.config;
 
-import com.ticketsystem.booking.IntegrationTest;
+import com.ridehub.booking.IntegrationTest;
 import java.util.Comparator;
 import org.junit.jupiter.api.ClassDescriptor;
 import org.junit.jupiter.api.ClassOrderer;

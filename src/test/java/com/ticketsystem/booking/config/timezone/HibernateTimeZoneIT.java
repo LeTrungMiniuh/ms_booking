@@ -1,11 +1,11 @@
-package com.ticketsystem.booking.config.timezone;
+package com.ridehub.booking.config.timezone;
 
 import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.ticketsystem.booking.IntegrationTest;
-import com.ticketsystem.booking.repository.timezone.DateTimeWrapper;
-import com.ticketsystem.booking.repository.timezone.DateTimeWrapperRepository;
+import com.ridehub.booking.IntegrationTest;
+import com.ridehub.booking.repository.timezone.DateTimeWrapper;
+import com.ridehub.booking.repository.timezone.DateTimeWrapperRepository;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import org.junit.jupiter.api.BeforeEach;

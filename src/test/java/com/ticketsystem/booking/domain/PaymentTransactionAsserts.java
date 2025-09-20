@@ -1,6 +1,6 @@
-package com.ticketsystem.booking.domain;
+package com.ridehub.booking.domain;
 
-import static com.ticketsystem.booking.domain.AssertUtils.bigDecimalCompareTo;
+import static com.ridehub.booking.domain.AssertUtils.bigDecimalCompareTo;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class PaymentTransactionAsserts {

@@ -18,7 +18,7 @@
     "messageBroker": "kafka",
     "monorepository": true,
     "nativeLanguage": "en",
-    "packageName": "com.ticketsystem.booking",
+    "packageName": "com.ridehub.booking",
     "prodDatabaseType": "mysql",
     "serverPort": "8083",
     "serviceDiscoveryType": "consul",

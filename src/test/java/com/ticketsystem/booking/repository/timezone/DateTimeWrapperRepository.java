@@ -1,4 +1,4 @@
-package com.ticketsystem.booking.repository.timezone;
+package com.ridehub.booking.repository.timezone;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

@@ -17,7 +17,7 @@ logging:
   level:
     ROOT: INFO
     tech.jhipster: INFO
-    com.ticketsystem.booking: INFO
+    com.ridehub.booking: INFO
 
 management:
   prometheus:

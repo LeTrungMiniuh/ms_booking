@@ -1,10 +1,10 @@
-package com.ticketsystem.booking.domain;
+package com.ridehub.booking.domain;
 
-import static com.ticketsystem.booking.domain.AppliedPromotionTestSamples.*;
-import static com.ticketsystem.booking.domain.BookingTestSamples.*;
+import static com.ridehub.booking.domain.AppliedPromotionTestSamples.*;
+import static com.ridehub.booking.domain.BookingTestSamples.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.ticketsystem.booking.web.rest.TestUtil;
+import com.ridehub.booking.web.rest.TestUtil;
 import org.junit.jupiter.api.Test;
 
 class AppliedPromotionTest {
